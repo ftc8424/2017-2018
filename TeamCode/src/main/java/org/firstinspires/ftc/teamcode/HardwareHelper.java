@@ -154,7 +154,7 @@ public class HardwareHelper {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            if ( robotType == FULLAUTO || robotType == FULLTELEOP ) {
+            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT) {
                 leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                 rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
                 rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -240,7 +240,8 @@ public class HardwareHelper {
 
         }
         isLauncherRunning = false;
-        initLaunchArray();
+        if (! (robotType == TROLLBOT) )
+            initLaunchArray();
         prevEncoderSaved = 0;
         prevTimeSaved = 0;
     }
@@ -601,7 +602,7 @@ statements are true than the code will stop working, 2. I don't know what else.
     public void normalDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == FULLTELEOP ) {
+        if ( robotType == FULLTELEOP || robotType == TROLLBOT ) {
             leftMidDrive.setPower(leftPower);
             rightMidDrive.setPower(rightPower);
         }
