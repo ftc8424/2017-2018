@@ -116,8 +116,8 @@ public class TeleOp_Trollbot extends OpMode {
         double rightSquaredVal = rightStickVal * rightStickVal;
         double leftSquaredVal = leftStickVal * leftStickVal;
 
-        double rightStickSide = -gamepad1.right_stick_x;
-        double leftStickSide = -gamepad1.right_stick_x;
+        double rightStickSide = gamepad1.right_stick_x;
+        double leftStickSide = gamepad1.right_stick_x;
         double rightSquaredSide = rightStickSide * rightStickSide;
         double leftSquaredSide = leftStickSide * leftStickSide;
 
@@ -126,8 +126,13 @@ public class TeleOp_Trollbot extends OpMode {
 
         if (rightStickVal < 0) rightSquaredVal = -rightSquaredVal;
         if (leftStickVal < 0) leftSquaredVal = -leftSquaredVal;
-        telemetry.addData("NormalDrive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
-        robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
+
+        if ( Math.abs(leftSquaredSide) >0.1||Math.abs(rightSquaredSide) >0.1 ) {
+            robot.sideDrive(this, leftSquaredVal, rightSquaredVal);
+        } else {
+            robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
+        }
+        telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
 
         telemetry.addData("Path0", "Position at %7d :%7d",
                 robot.leftBackDrive.getCurrentPosition(),

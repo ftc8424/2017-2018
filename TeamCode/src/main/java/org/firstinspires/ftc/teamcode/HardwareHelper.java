@@ -197,8 +197,8 @@ public class HardwareHelper {
             launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             launchMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             launchMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            launchMotor1.setMaxSpeed(COUNTS_PER_LAUNCHER);
-            launchMotor2.setMaxSpeed(COUNTS_PER_LAUNCHER);
+            //launchMotor1.setMaxSpeed(COUNTS_PER_LAUNCHER);
+            //launchMotor2.setMaxSpeed(COUNTS_PER_LAUNCHER);
             launchMotor1.setDirection(DcMotor.Direction.FORWARD);
             launchMotor2.setDirection(DcMotor.Direction.REVERSE);
             launchMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -607,6 +607,22 @@ statements are true than the code will stop working, 2. I don't know what else.
             rightMidDrive.setPower(rightPower);
         }
         caller.telemetry.addData("normalDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
+    }
+    /**
+     * Drive the robot side to side based on power settings passed in.
+     *
+     * @param leftPower      Power setting (-1.0 - 1.0)
+     * @param rightPower     Power setting (-1.0 - 1.0)
+     */
+
+    public void sideDrive (OpMode caller, double leftPower, double rightPower) {
+        leftBackDrive.setPower(-leftPower);
+        rightBackDrive.setPower(rightPower);
+        if ( robotType == FULLTELEOP || robotType == TROLLBOT ) {
+                leftMidDrive.setPower(leftPower);
+                rightMidDrive.setPower(-rightPower);
+        }
+        caller.telemetry.addData("sideDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
     }
 
     /**
