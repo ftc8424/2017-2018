@@ -234,13 +234,13 @@ public class HardwareHelper {
         /* Now that hardware is mapped, set to initial positions/settings. */
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
-        if ( robotType == FULLTELEOP || robotType == FULLAUTO ) {
+        if ( robotType == FULLTELEOP || robotType == FULLAUTO || robotType == TROLLBOT ) {
             leftMidDrive.setPower(0);
             rightMidDrive.setPower(0);
 
         }
         isLauncherRunning = false;
-        if (! (robotType == TROLLBOT) )
+        if ( robotType != TROLLBOT )
             initLaunchArray();
         prevEncoderSaved = 0;
         prevTimeSaved = 0;

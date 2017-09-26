@@ -117,7 +117,7 @@ public class TeleOp_Trollbot extends OpMode {
         double leftSquaredVal = leftStickVal * leftStickVal;
 
         double rightStickSide = gamepad1.right_stick_x;
-        double leftStickSide = gamepad1.right_stick_x;
+        double leftStickSide = gamepad1.right_stick_x;    // Is this right or left?
         double rightSquaredSide = rightStickSide * rightStickSide;
         double leftSquaredSide = leftStickSide * leftStickSide;
 
