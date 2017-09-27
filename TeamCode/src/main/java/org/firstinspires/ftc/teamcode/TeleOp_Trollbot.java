@@ -63,7 +63,6 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 
 public class TeleOp_Trollbot extends OpMode {
 
-
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(TROLLBOT);
@@ -117,7 +116,7 @@ public class TeleOp_Trollbot extends OpMode {
         double leftSquaredVal = leftStickVal * leftStickVal;
 
         double rightStickSide = gamepad1.right_stick_x;
-        double leftStickSide = gamepad1.right_stick_x;    // Is this right or left?
+        double leftStickSide = gamepad1.left_stick_x;    // Is this right or left?
         double rightSquaredSide = rightStickSide * rightStickSide;
         double leftSquaredSide = leftStickSide * leftStickSide;
 
@@ -127,8 +126,8 @@ public class TeleOp_Trollbot extends OpMode {
         if (rightStickVal < 0) rightSquaredVal = -rightSquaredVal;
         if (leftStickVal < 0) leftSquaredVal = -leftSquaredVal;
 
-        if ( Math.abs(leftSquaredSide) >0.1||Math.abs(rightSquaredSide) >0.1 ) {
-            robot.sideDrive(this, leftSquaredVal, rightSquaredVal);
+        if (Math.abs(leftSquaredSide) > 0.1 || Math.abs(rightSquaredSide) > 0.1) {
+            robot.sideDrive(this, leftSquaredSide, rightSquaredSide);
         } else {
             robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
         }
@@ -180,5 +179,4 @@ public class TeleOp_Trollbot extends OpMode {
     public void stop() {
         robot.normalDrive(this, 0, 0);
     }
-
 }

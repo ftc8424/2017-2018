@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.LAUNCHTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
 
 /**
  * Created by FTC8424 on 10/13/2016.
@@ -46,20 +47,21 @@ public class HardwareHelper {
     public DcMotor  rightMidDrive = null;  private static final String cfgRMidDrive   = "R Mid";
     public DcMotor  leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
     public DcMotor  rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
-    public DcMotor  launchMotor1 = null;    private static final String cfgLaunchMotor1 = "R Launch";
-    public DcMotor  launchMotor2 = null;    private static final String cfgLaunchMotor2 = "L Launch";
-    public DcMotor  launchLift = null;    private static final String cfglaunchLift = "Launch Lift";
-    public Servo    leftPush = null;       private static final String cfgLPush       = "L Push";
-    public Servo    rightPush = null;      private static final String cfgRPush       = "R Push";
-    public ColorSensor color = null;       private static final String cfgColor       = "color";
-    public DcMotor  manipMotor = null;     private static final  String cfgmanipMotor = "Manipulator";
-    public ModernRoboticsI2cGyro Gyro = null;    private static final      String cfgGyro        = "gyro";
+    public Servo  rightManip = null; private static final String  cfgrightManip = "R Manip";
+    public Servo  leftManip = null; private static final String  cfgleftManip = "L Manip";
+    public Servo  rightLift = null; private static final String  cfgrightLift = "R Lift";
+    public Servo  leftLift = null; private static final String  cfgleftLift = "L Lift";
+    public DcMotor rpCenter = null; private static final String cfgrpCenter = "RPC";
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
     public static final double lpushDeploy = 0.000000000000001;
     public static final double rpushStart = 0.4;
     public static final double rpushDeploy = 0.9999999999999999999999999999999;
+    public static final double rlift = 0.5;
+    public static final double rmanip = 0.5;
+    public static final double llift = 0.5;
+    public static final double lmanip = 0.5;
     //public static final double launchliftStart = .80;
     //public static final double launchliftDeploy = 0.1;
     private static final int Samplesize = 250;
@@ -74,7 +76,7 @@ public class HardwareHelper {
 
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
-        FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,
+        FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP
     }
 
     /*
@@ -150,11 +152,11 @@ public class HardwareHelper {
 
 
          /* Set the drive motors in the map */
-        if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO || robotType == AUTOTEST ) {
+        if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO || robotType == AUTOTEST || robotType == TROLLBOTMANIP ) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT) {
+            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                 rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
                 rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -169,6 +171,7 @@ public class HardwareHelper {
                     * will ensue when the actual autonomous runs and hopefully this note will help
                     * folks figure out the failed reset might be at fault.
                     */
+
             boolean resetOk = false;
             if ( robotType == AUTOTEST || robotType == FULLAUTO ) {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
@@ -184,52 +187,31 @@ public class HardwareHelper {
                 }
             }
         }
+        if ( robotType == TROLLBOTMANIP) {
+            leftManip = hwMap.servo.get(cfgleftManip);
+            rightManip = hwMap.servo.get(cfgrightManip);
+            rightLift = hwMap.servo.get(cfgrightLift);
+            leftLift = hwMap.servo.get(cfgleftLift);
+            rpCenter = hwMap.dcMotor.get(cfgrpCenter);
 
-        /* Set the subsequent motors based on type */
-        if ( robotType == LAUNCHTEST || robotType == FULLTELEOP || robotType == FULLAUTO ) {
-            launchMotor1 = hwMap.dcMotor.get(cfgLaunchMotor1);
-            launchMotor2 = hwMap.dcMotor.get(cfgLaunchMotor2);
-
-            //vc1`launchMotor2 = hwMap.dcMotor.get(cfgLaunchMotor2);
-            launchMotor1.resetDeviceConfigurationForOpMode();
-            launchMotor2.resetDeviceConfigurationForOpMode();
-            launchMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            launchMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            launchMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            launchMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //launchMotor1.setMaxSpeed(COUNTS_PER_LAUNCHER);
-            //launchMotor2.setMaxSpeed(COUNTS_PER_LAUNCHER);
-            launchMotor1.setDirection(DcMotor.Direction.FORWARD);
-            launchMotor2.setDirection(DcMotor.Direction.REVERSE);
-            launchMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            launchMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            manipMotor = hwMap.dcMotor.get(cfgmanipMotor);
-            //manipMotor.setDirection(DcMotor.Direction.REVERSE);
-        }
-
-        /* Set the servos based on type */
-        if (  robotType == FULLTELEOP || robotType == FULLAUTO || robotType == AUTOTEST ) {
-            leftPush = hwMap.servo.get(cfgLPush);
-            rightPush = hwMap.servo.get(cfgRPush);
-            rightPush.setPosition(rpushStart);
-            leftPush.setPosition(lpushStart);
-        }
-        if ( robotType == LAUNCHTEST || robotType == FULLAUTO || robotType == FULLTELEOP ) {
-            launchLift = hwMap.dcMotor.get(cfglaunchLift);
-            launchLift.setDirection(DcMotor.Direction.REVERSE);
+            leftManip.setPosition(lmanip);
+            rightManip.setPosition(rmanip);
+            leftLift.setPosition(llift);
+            rightLift.setPosition(rlift);
+            rpCenter.setPower(0);
+            }
 
 
-        }
+
+
+
 
         /* Set the sensors based on type */
-        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ) {
-            color = hwMap.colorSensor.get(cfgColor);
-        }
+
 
         /* Get the Gyro */
-        if (robotType == FULLAUTO ) {
-            gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get(cfgGyro);
-        }
+
+
 
         /* Now that hardware is mapped, set to initial positions/settings. */
         leftBackDrive.setPower(0);
