@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
 
 /**
  * Created by FTC8424 on 9/15/2016.
@@ -62,7 +62,7 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private HardwareHelper robot = new HardwareHelper(TROLLBOT);
+    private HardwareHelper robot = new HardwareHelper(TROLLBOTMANIP);
 
 //    private Servo LPush;
 //    double LPushStart = 0.1;
@@ -72,7 +72,9 @@ public class TeleOp_Trollbot_Manip extends OpMode {
     private double LservoUpTime = 0;
     private double RservoUpTime = 0;
     private double powerSetTime = 0;
-
+    private boolean pastX = false;
+    private boolean pastY = false;
+    private double lastManipTime = 0;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -122,37 +124,44 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
         if (rightStickVal < 0) rightSquaredVal = -rightSquaredVal;
         if (leftStickVal < 0) leftSquaredVal = -leftSquaredVal;
+        robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
+
 
         if (Math.abs(leftSquaredSide) > 0.1 || Math.abs(rightSquaredSide) > 0.1) {
             robot.sideDrive(this, leftSquaredSide, rightSquaredSide);
-
-            double rightButton;
-
-            boolean pastX = false;
-            int speed2 = 1;
-
-            if (gamepad2.x != pastX) {
-                pastX = gamepad2.x;
-                if(gamepad2.x)
-                    if (speed2 == 1) {
-                        speed2 = -1;
-                    } else {
-                         speed2 = 1;
-                    }
-                }
-        }
-        int speed = speed2;
-        leftManip.setPosition(speed);
-            rightManip.setPosition(-speed);
-        else {
-            robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
         }
 
-        if(pastX == false) {
+        int speed = 0;
+        int manipMove;
+        if (gamepad2.y && lastManipTime + 1 < runtime.seconds()) {
+            if (pastY){
+                robot.leftManip.setPosition(0.5);
+                robot.rightManip.setPosition(0.5);
+                pastY = false;
+            } else{
+                robot.leftManip.setPosition(0);
+                robot.rightManip.setPosition(1);
+                pastY = true;
+                pastX = false;
+            }
+            lastManipTime = runtime.seconds();
+        }
+
+        if (gamepad2.x && lastManipTime + 1 < runtime.seconds()) {
+            if (pastX) {
+                robot.leftManip.setPosition(0.5);
+                robot.rightManip.setPosition(0.5);
+                pastX = false;
+                pastY = false;
+            } else {
+                robot.leftManip.setPosition(0);
+                robot.rightManip.setPosition(1);
+                pastX = true;
+            }
+            lastManipTime = runtime.seconds();
 
         }
 
-        }
 
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
 

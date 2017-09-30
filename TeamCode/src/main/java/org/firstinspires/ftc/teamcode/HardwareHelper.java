@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -49,8 +51,8 @@ public class HardwareHelper {
     public DcMotor  rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
     public Servo  rightManip = null; private static final String  cfgrightManip = "R Manip";
     public Servo  leftManip = null; private static final String  cfgleftManip = "L Manip";
-    public Servo  rightLift = null; private static final String  cfgrightLift = "R Lift";
-    public Servo  leftLift = null; private static final String  cfgleftLift = "L Lift";
+    public DcMotor  rightLift = null; private static final String  cfgrightLift = "R Lift";
+    public DcMotor leftLift = null; private static final String  cfgleftLift = "L Lift";
     public DcMotor rpCenter = null; private static final String cfgrpCenter = "RPC";
 
     /* Servo positions, adjust as necessary. */
@@ -131,6 +133,7 @@ public class HardwareHelper {
      */
     public HardwareHelper(RobotType type) {
         robotType = type;
+
     }
 
     /**
@@ -155,6 +158,9 @@ public class HardwareHelper {
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO || robotType == AUTOTEST || robotType == TROLLBOTMANIP ) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
+            leftLift = hwMap.dcMotor.get(cfgleftLift);
+            rightLift = hwMap.dcMotor.get(cfgrightLift);
+            //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
@@ -190,15 +196,9 @@ public class HardwareHelper {
         if ( robotType == TROLLBOTMANIP) {
             leftManip = hwMap.servo.get(cfgleftManip);
             rightManip = hwMap.servo.get(cfgrightManip);
-            rightLift = hwMap.servo.get(cfgrightLift);
-            leftLift = hwMap.servo.get(cfgleftLift);
-            rpCenter = hwMap.dcMotor.get(cfgrpCenter);
-
             leftManip.setPosition(lmanip);
             rightManip.setPosition(rmanip);
-            leftLift.setPosition(llift);
-            rightLift.setPosition(rlift);
-            rpCenter.setPower(0);
+            //rpCenter.setPower(0);
             }
 
 
@@ -223,7 +223,7 @@ public class HardwareHelper {
         }
         isLauncherRunning = false;
         if ( robotType != TROLLBOT )
-            initLaunchArray();
+            //initLaunchArray();
         prevEncoderSaved = 0;
         prevTimeSaved = 0;
     }
@@ -628,8 +628,8 @@ statements are true than the code will stop working, 2. I don't know what else.
      * Stop the launcher, and reset any variables as part of the launcher
      */
     public void stopLauncher() {
-        launchMotor1.setPower(0.0);
-        launchMotor2.setPower(0.0);
+        //launchMotor1.setPower(0.0);
+        //launchMotor2.setPower(0.0);
         launcherStartTime = 0;
         isLauncherRunning = false;
     }
@@ -645,9 +645,9 @@ statements are true than the code will stop working, 2. I don't know what else.
         double batteryVoltage = getVoltage();
 
         // Clear out the timing and encoder ticks arrays
-        initLaunchArray();
-        launchMotor1.setPower(0.65);
-        launchMotor2.setPower(0.65);
+        //initLaunchArray();
+        //launchMotor1.setPower(0.65);
+        //launchMotor2.setPower(0.65);
         isLauncherRunning = true;
         launcherStartTime = runtime.milliseconds();
         return batteryVoltage;
@@ -657,9 +657,9 @@ statements are true than the code will stop working, 2. I don't know what else.
         double batteryVoltage = getVoltage();
 
         // Clear out the timing and encoder ticks arrays
-        initLaunchArray();
-        launchMotor1.setPower(power);
-        launchMotor2.setPower(power);
+        //initLaunchArray();
+        //launchMotor1.setPower(power);
+        //launchMotor2.setPower(power);
         isLauncherRunning = true;
         launcherStartTime = runtime.milliseconds();
         return batteryVoltage;
@@ -689,8 +689,8 @@ statements are true than the code will stop working, 2. I don't know what else.
 //        caller.telemetry.update();
         while (caller.opModeIsActive() &&  ! adjustLaunchSpeed(caller)) {
 
-            caller.telemetry.addData("Launch Motor1", " Power at %.2f", launchMotor1.getPower());
-            caller.telemetry.addData("Launch Motor2", " Power at %.2f", launchMotor2.getPower());
+            //caller.telemetry.addData("Launch Motor1", " Power at %.2f", launchMotor1.getPower());
+            //caller.telemetry.addData("Launch Motor2", " Power at %.2f", launchMotor2.getPower());
             caller.telemetry.update();
 
         }
@@ -707,15 +707,15 @@ statements are true than the code will stop working, 2. I don't know what else.
         caller.telemetry.addData("Launch Motor", "Waiting %.2f Secs to spin-up", sleepTime / 1000.0);
         caller.telemetry.update();
         caller.sleep(sleepTime);
-        caller.telemetry.addData("Launch Motor", "Bat Voltage is %.2f / Power at %.2f",
-                volts, launchMotor1.getPower());
-        caller.telemetry.update();
-        launchLift.setPower(1); // Shoot the first ball
-        initLaunchArray();
-        caller.sleep(2200);
-        if ( !caller.opModeIsActive() ) return;
-        launchLift.setPower(0);
-        stopLauncher();
+        //caller.telemetry.addData("Launch Motor", "Bat Voltage is %.2f / Power at %.2f",
+                //volts, launchMotor1.getPower());
+        //caller.telemetry.update();
+        //.setPower(1); // Shoot the first ball
+        //initLaunchArray();
+        //caller.sleep(2200);
+        //if ( !caller.opModeIsActive() ) return;
+        //launchLift.setPower(0);
+        //stopLauncher();
     }
 
     /**
@@ -730,8 +730,8 @@ statements are true than the code will stop working, 2. I don't know what else.
             encTime[i] = 0;
         }
         encIndex = 0;
-        prevEncoderSaved = launchMotor1.getCurrentPosition();
-        prevEncoderSaved = launchMotor2.getCurrentPosition();
+        //prevEncoderSaved = launchMotor1.getCurrentPosition();
+        //prevEncoderSaved = launchMotor2.getCurrentPosition();
         prevTimeSaved = runtime.milliseconds();
     }
 
@@ -748,7 +748,7 @@ statements are true than the code will stop working, 2. I don't know what else.
      */
     private boolean getTicks() {
         if ( ! isLauncherRunning ) return false;
-        int curEncoder = Math.abs(launchMotor1.getCurrentPosition());
+        int curEncoder = 0;
         double  curTime = runtime.milliseconds();
 
         if (prevEncoderSaved - curEncoder == 0 )
@@ -775,8 +775,8 @@ statements are true than the code will stop working, 2. I don't know what else.
             launcherStartTime = runtime.milliseconds();
             return false;
         } else if ( isLauncherRunning && launcherStartTime + 500 < runtime.milliseconds() ) {
-            launchMotor1.setPower(1.0);
-            launchMotor2.setPower(1.0);
+            //launchMotor1.setPower(1.0);
+            //launchMotor2.setPower(1.0);
             return true;
         }else {
             return false;
