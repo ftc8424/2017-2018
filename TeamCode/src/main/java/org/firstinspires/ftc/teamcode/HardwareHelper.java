@@ -198,6 +198,11 @@ public class HardwareHelper {
             rightManip = hwMap.servo.get(cfgrightManip);
             leftManip.setPosition(lmanip);
             rightManip.setPosition(rmanip);
+            leftLift = hwMap.dcMotor.get(cfgleftLift);
+            rightLift = hwMap.dcMotor.get(cfgrightLift);
+            leftLift.setDirection(DcMotor.Direction.REVERSE);
+            rightLift.setPower(0);
+            leftLift.setPower(0);
             //rpCenter.setPower(0);
             }
 

@@ -72,8 +72,7 @@ public class TeleOp_Trollbot_Manip extends OpMode {
     private double LservoUpTime = 0;
     private double RservoUpTime = 0;
     private double powerSetTime = 0;
-    private boolean pastX = false;
-    private boolean pastY = false;
+    private boolean manipMoving = false;
     private double lastManipTime = 0;
     /*
      * Code to run ONCE when the driver hits INIT
@@ -134,33 +133,42 @@ public class TeleOp_Trollbot_Manip extends OpMode {
         int speed = 0;
         int manipMove;
         if (gamepad2.y && lastManipTime + 1 < runtime.seconds()) {
-            if (pastY){
+            if (manipMoving){
                 robot.leftManip.setPosition(0.5);
                 robot.rightManip.setPosition(0.5);
-                pastY = false;
+                manipMoving = false;
             } else{
-                robot.leftManip.setPosition(0);
-                robot.rightManip.setPosition(1);
-                pastY = true;
-                pastX = false;
+                robot.leftManip.setPosition(1);
+                robot.rightManip.setPosition(0);
+                manipMoving = true;
             }
             lastManipTime = runtime.seconds();
         }
 
         if (gamepad2.x && lastManipTime + 1 < runtime.seconds()) {
-            if (pastX) {
+            if (manipMoving) {
                 robot.leftManip.setPosition(0.5);
                 robot.rightManip.setPosition(0.5);
-                pastX = false;
-                pastY = false;
+                manipMoving = false;
             } else {
-                robot.leftManip.setPosition(0);      // Is this right?  It's same as 'Y' action
-                robot.rightManip.setPosition(1);     // Check this to make sure it's right
-                pastX = true;
+                robot.leftManip.setPosition(0);
+                robot.rightManip.setPosition(1);
+                manipMoving = true;
             }
             lastManipTime = runtime.seconds();
 
         }
+        if(gamepad2.dpad_up) {
+            robot.leftLift.setPower(-0.25);
+            robot.rightLift.setPower(-0.25);
+        } else if(gamepad2.dpad_down) {
+            robot.leftLift.setPower(0.25);
+            robot.rightLift.setPower(0.25);
+        } else {
+            robot.leftLift.setPower(0);
+            robot.rightLift.setPower(0);
+        }
+
 
 
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
