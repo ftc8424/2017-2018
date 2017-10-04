@@ -154,8 +154,8 @@ public class TeleOp_Trollbot_Manip extends OpMode {
                 pastX = false;
                 pastY = false;
             } else {
-                robot.leftManip.setPosition(0);
-                robot.rightManip.setPosition(1);
+                robot.leftManip.setPosition(0);      // Is this right?  It's same as 'Y' action
+                robot.rightManip.setPosition(1);     // Check this to make sure it's right
                 pastX = true;
             }
             lastManipTime = runtime.seconds();
