@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -171,6 +172,7 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
 
 
+
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
 
         telemetry.addData("Path0", "Position at %7d :%7d",
@@ -178,6 +180,8 @@ public class TeleOp_Trollbot_Manip extends OpMode {
                 robot.rightBackDrive.getCurrentPosition());
 
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
+
+        {
 
 /*    Not needed on current Trollbot, has no servos.
 
@@ -215,8 +219,8 @@ public class TeleOp_Trollbot_Manip extends OpMode {
     /*
      * Code to run ONCE after the driver hits STOP
      */
-    @Override
-    public void stop() {
+    //@Override
+    //public void stop() {
         robot.normalDrive(this, 0, 0);
     }
 }

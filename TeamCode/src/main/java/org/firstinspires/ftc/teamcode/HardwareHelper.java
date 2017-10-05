@@ -45,15 +45,16 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMA
 public class HardwareHelper {
 
     /* Public OpMode members, things they can use */
-    public DcMotor  leftMidDrive = null;   private static final String cfgLMidDrive   = "L Mid";
-    public DcMotor  rightMidDrive = null;  private static final String cfgRMidDrive   = "R Mid";
-    public DcMotor  leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
-    public DcMotor  rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
-    public Servo  rightManip = null; private static final String  cfgrightManip = "R Manip";
-    public Servo  leftManip = null; private static final String  cfgleftManip = "L Manip";
-    public DcMotor  rightLift = null; private static final String  cfgrightLift = "R Lift";
-    public DcMotor leftLift = null; private static final String  cfgleftLift = "L Lift";
-    public DcMotor rpCenter = null; private static final String cfgrpCenter = "RPC";
+    public DcMotor     leftMidDrive = null;   private static final String cfgLMidDrive   = "L Mid";
+    public DcMotor     rightMidDrive = null;  private static final String cfgRMidDrive   = "R Mid";
+    public DcMotor     leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
+    public DcMotor     rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
+    public Servo       rightManip = null; private static final String  cfgrightManip = "R Manip";
+    public Servo       leftManip = null; private static final String  cfgleftManip = "L Manip";
+    public DcMotor     rightLift = null; private static final String  cfgrightLift = "R Lift";
+    public DcMotor     leftLift = null; private static final String  cfgleftLift = "L Lift";
+    public DcMotor     rpCenter = null; private static final String cfgrpCenter = "RPC";
+    public ColorSensor ColorSensor = null; private static final String cfgrpColorSensor = "Color Sensor";
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
