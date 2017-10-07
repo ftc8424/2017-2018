@@ -160,15 +160,27 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
         }
         if(gamepad2.dpad_up) {
-            robot.leftLift.setPower(-0.25);
-            robot.rightLift.setPower(-0.25);
+            robot.leftManip.setPosition(1);
+            robot.rightManip.setPosition(-1);
         } else if(gamepad2.dpad_down) {
-            robot.leftLift.setPower(0.25);
-            robot.rightLift.setPower(0.25);
+            robot.leftManip.setPosition(1);
+            robot.rightManip.setPosition(1);
         } else {
-            robot.leftLift.setPower(0);
-            robot.rightLift.setPower(0);
+            robot.leftManip.setPosition(0);
+            robot.rightManip.setPosition(0);
         }
+
+
+        //if(gamepad2.dpad_up) {
+        //    robot.leftLift.setPower(-0.25);
+          //  robot.rightLift.setPower(-0.25);
+        //} else if(gamepad2.dpad_down) {
+          //  robot.leftLift.setPower(0.25);
+            //robot.rightLift.setPower(0.25);
+        //} else {
+          //  robot.leftLift.setPower(0);
+            //robot.rightLift.setPower(0);
+        //}
 
 
 
