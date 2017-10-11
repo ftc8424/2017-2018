@@ -54,7 +54,7 @@ public class HardwareHelper {
     public DcMotor     rightLift = null; private static final String  cfgrightLift = "R Lift";
     public DcMotor     leftLift = null; private static final String  cfgleftLift = "L Lift";
     public DcMotor     rpCenter = null; private static final String cfgrpCenter = "RPC";
-    public ColorSensor ColorSensor = null; private static final String cfgrpColorSensor = "Color Sensor";
+    public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
@@ -156,14 +156,16 @@ public class HardwareHelper {
 
 
          /* Set the drive motors in the map */
-        if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO || robotType == AUTOTEST || robotType == TROLLBOTMANIP ) {
+        if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
+                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
-            leftLift = hwMap.dcMotor.get(cfgleftLift);
-            rightLift = hwMap.dcMotor.get(cfgrightLift);
+
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+                leftLift = hwMap.dcMotor.get(cfgleftLift);
+                rightLift = hwMap.dcMotor.get(cfgrightLift);
                 leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                 rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
                 rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -180,7 +182,7 @@ public class HardwareHelper {
                     */
 
             boolean resetOk = false;
-            if ( robotType == AUTOTEST || robotType == FULLAUTO ) {
+            if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
                 if ( robotType == FULLAUTO )
                     resetOk = resetOk && waitForReset(leftMidDrive, rightMidDrive, 2000);
@@ -206,8 +208,10 @@ public class HardwareHelper {
             leftLift.setPower(0);
             //rpCenter.setPower(0);
             }
-
-
+        /* Set the sensors based on type */
+        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ) {
+            color = hwMap.colorSensor.get(cfgrpColorSensor);
+        }
 
 
 
