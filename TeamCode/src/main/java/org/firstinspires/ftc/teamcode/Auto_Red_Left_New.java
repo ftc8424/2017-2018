@@ -35,7 +35,7 @@ public class Auto_Red_Left_New extends LinearOpMode {
         robot.color.enableLed(false);
         waitForStart();
 //deploy arm here
-         //   robot.color.enableLed(true);
+            robot.color.enableLed(true);
         sleep(10);
         blueValue = robot.color.blue();
         redValue = robot.color.red();
@@ -56,7 +56,7 @@ public class Auto_Red_Left_New extends LinearOpMode {
             telemetry.update();
 
         }
-        //  robot.color.enableLed(false);
+          robot.color.enableLed(false);
 
 
         sleep(1000);
