@@ -137,6 +137,9 @@ public class HardwareHelper {
 
     }
 
+    // TODO - Refactor the robot_init to move all initialization into sub-sytem specific private methods (e.g., initMotors, initServos)
+    // Will make the code easier to understand
+
     /**
      * This is the initialization routine for every OpMode in the system.  It uses the RobotType
      * as passed in the contrustor to determine which elements of the physical robot to go
