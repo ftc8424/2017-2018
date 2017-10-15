@@ -5,16 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 
 /**
  * Created by FTC8424 on 1/14/2017.
  *
- * Autonomous red, in the front (nearest audience)
+ * Autonomous blue, in the front (nearest audience)
  *
  */
-@Autonomous(name = "Auto Red Front", group = "RedSide")
-public class Auto_Red_Front extends LinearOpMode {
+@Autonomous(name = "Auto Blue Front", group = "BlueSide")
+public class Auto_Blue_Front extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(COLORTEST);
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -67,13 +66,13 @@ public class Auto_Red_Front extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
 
-        robot.gyroTurn(this, 90, 5);
+        robot.gyroTurn(this, 270, 5);
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 34, 34, 10);
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 5);
 
-        // TODO Complete Red Auto with deliver glyph
+        // TODO Complete Blue Auto with deliver glyph
 
     }
 }
