@@ -9,9 +9,12 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 
 /**
  * Created by FTC8424 on 1/14/2017.
+ *
+ * Autonomous red, in the front (nearest audience)
+ * 
  */
-@Autonomous(name = "Auto Red Left New", group = "RedSide")
-public class Auto_Red_Left_New extends LinearOpMode {
+@Autonomous(name = "Auto Red Front", group = "RedSide")
+public class Auto_Red_Front extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(COLORTEST);
     private ElapsedTime runtime = new ElapsedTime();
 
