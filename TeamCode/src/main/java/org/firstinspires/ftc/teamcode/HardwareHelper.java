@@ -5,10 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -16,14 +14,13 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.LAUNCHTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
 
 /**
  * Created by FTC8424 on 10/13/2016.
  *
- * This is the initial helper class for the hardware componnets of E-Cubed (FTC8424) robot.
+ * This is the initial helper class for the hardware components of E-Cubed (FTC8424) robot.
  * It is NOT an OpMode or any of the others, it's a helper class that has the hardware
  * map and some of the helper methods that are needed for all OpModes.
  *
@@ -51,13 +48,17 @@ public class HardwareHelper {
     public DcMotor     rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
     public Servo       rightManip = null; private static final String  cfgrightManip = "R Manip";
     public Servo       leftManip = null; private static final String  cfgleftManip = "L Manip";
+    public Servo        colorArm = null; private static final String cfgcolorArm = "C Arm";
     public DcMotor     rightLift = null; private static final String  cfgrightLift = "R Lift";
     public DcMotor     leftLift = null; private static final String  cfgleftLift = "L Lift";
     public DcMotor     rpCenter = null; private static final String cfgrpCenter = "RPC";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
+    public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
+    public static final double cArmStart = 0.1;
+    public static final double cArmDeploy = 0.75;
     public static final double lpushDeploy = 0.000000000000001;
     public static final double rpushStart = 0.4;
     public static final double rpushDeploy = 0.9999999999999999999999999999999;
@@ -93,8 +94,6 @@ public class HardwareHelper {
     private static final double WHEEL_DIAMETER_INCHES= 4.0;   // 4" Omni wheels and 4" Stealth
 
     private static final int    COUNTS_PER_LAUNCHER  = 3600; // AndyMark NeveRest 3.7:1, ideal
-
-    ModernRoboticsI2cGyro gyro    = null;                    // Additional Gyro device
 
 //    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
 //    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
@@ -137,9 +136,6 @@ public class HardwareHelper {
 
     }
 
-    // TODO - Refactor the robot_init to move all initialization into sub-sytem specific private methods (e.g., initMotors, initServos)
-    // Will make the code easier to understand
-
     /**
      * This is the initialization routine for every OpMode in the system.  It uses the RobotType
      * as passed in the contrustor to determine which elements of the physical robot to go
@@ -155,9 +151,28 @@ public class HardwareHelper {
      */
     public void robot_init(HardwareMap hwMap) {
         this.hwMap = hwMap;
+        initMotor();
+        initServo();
+        initSensor();
+    }
 
+    /**
+     * This is the method used for 180 degree servos.  It gets their current position and sets
+     * it to their other position.
+     * @param servo
+     */
+    public void deploy(Servo servo) {
+        double targetPosition = 0;
+        if (servo.equals(colorArm)) targetPosition = servo.getPosition()== cArmStart ? cArmDeploy : cArmStart;
+        else return;
+        servo.setPosition(targetPosition);
+    }
 
-
+    /**
+     * This method is used to initialize all motors and set them with directions and other
+     * parameters as necessary basd on the robot type.
+     */
+    private void initMotor() {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
                 robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ) {
@@ -200,33 +215,14 @@ public class HardwareHelper {
             }
         }
         if ( robotType == TROLLBOTMANIP) {
-            leftManip = hwMap.servo.get(cfgleftManip);
-            rightManip = hwMap.servo.get(cfgrightManip);
-            leftManip.setPosition(lmanip);
-            rightManip.setPosition(rmanip);
             leftLift = hwMap.dcMotor.get(cfgleftLift);
             rightLift = hwMap.dcMotor.get(cfgrightLift);
             leftLift.setDirection(DcMotor.Direction.REVERSE);
             rightLift.setPower(0);
             leftLift.setPower(0);
             //rpCenter.setPower(0);
-            }
-        /* Set the sensors based on type */
-        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ) {
-            color = hwMap.colorSensor.get(cfgrpColorSensor);
         }
-
-
-
-
-        /* Set the sensors based on type */
-
-
-        /* Get the Gyro */
-
-
-
-        /* Now that hardware is mapped, set to initial positions/settings. */
+         /* Now that hardware is mapped, set to initial positions/settings. */
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
         if ( robotType == FULLTELEOP || robotType == FULLAUTO || robotType == TROLLBOT ) {
@@ -237,10 +233,43 @@ public class HardwareHelper {
         isLauncherRunning = false;
         if ( robotType != TROLLBOT )
             //initLaunchArray();
-        prevEncoderSaved = 0;
+            prevEncoderSaved = 0;
         prevTimeSaved = 0;
     }
 
+    /**
+     * This method is used to initialize servos and set their positions.
+     */
+    private void initServo() {
+        if ( robotType == TROLLBOTMANIP) {
+            leftManip = hwMap.servo.get(cfgleftManip);
+            rightManip = hwMap.servo.get(cfgrightManip);
+            leftManip.setPosition(lmanip);
+            rightManip.setPosition(rmanip);
+            //rpCenter.setPower(0);
+        }
+    }
+
+    /**
+     * This method is used to initialize the sensors based on the type of sensor and robot.
+     */
+    private void initSensor() {
+
+        /* Set the sensors based on type */
+        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ) {
+            color = hwMap.colorSensor.get(cfgrpColorSensor);
+        }
+
+        /* Set the sensors based on type */
+
+
+        /* Get the Gyro */
+        if ( robotType == AUTOTEST || robotType == FULLAUTO ) {
+            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
+
+        }
+
+    }
     public boolean gyroTurn(LinearOpMode caller,
                             int heading,
                             double timeoutS) throws InterruptedException {
