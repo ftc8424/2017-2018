@@ -35,6 +35,13 @@ public class Auto_Blue_Front extends LinearOpMode {
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
+        robot.gyro.calibrate();
+        while(!isStopRequested() && robot.gyro.isCalibrating()){
+            telemetry.addData("Init:", "Calibrating");
+            telemetry.update();
+        }
+        telemetry.addData("Init:", "Calibrated!!");
+        telemetry.update();
         waitForStart();
 
         robot.deploy(robot.colorArm);
