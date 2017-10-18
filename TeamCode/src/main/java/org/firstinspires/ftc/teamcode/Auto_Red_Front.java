@@ -36,18 +36,18 @@ public class Auto_Red_Front extends LinearOpMode {
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
-        robot.gyro.calibrate();
+        /*robot.gyro.calibrate();
         while(!isStopRequested() && robot.gyro.isCalibrating()){
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
-        }
+        }*/
         telemetry.addData("Init:", "Calibrated!!");
         telemetry.update();
         waitForStart();
 
         robot.deploy(robot.colorArm);
 
-        sleep(10);
+        sleep(100);
         blueValue = robot.color.blue();
         redValue = robot.color.red();
         telemetry.addData("ColorValue:", "Blue-%d Red-%d", blueValue , redValue);
@@ -74,7 +74,11 @@ public class Auto_Red_Front extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
 
-        robot.gyroTurn(this, 90, 5);
+        if (robot.gyroTurn(this, 90, 5) == false){
+           telemetry.addData("Gyro", "turn unsuccessful");
+           telemetry.update();
+           return;
+       }
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 34, 34, 10);
         if ( !opModeIsActive() ) return;

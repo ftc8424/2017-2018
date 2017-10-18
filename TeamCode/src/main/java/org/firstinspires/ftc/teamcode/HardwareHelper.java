@@ -57,8 +57,8 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
-    public static final double cArmStart = 0.1;
-    public static final double cArmDeploy = 0.75;
+    public static final double cArmStart = 0;
+    public static final double cArmDeploy = 0.6;
     public static final double lpushDeploy = 0.000000000000001;
     public static final double rpushStart = 0.4;
     public static final double rpushDeploy = 0.9999999999999999999999999999999;
@@ -248,6 +248,10 @@ public class HardwareHelper {
             rightManip.setPosition(rmanip);
             //rpCenter.setPower(0);
         }
+        if ( robotType == COLORTEST) {
+            colorArm = hwMap.servo.get(cfgcolorArm);
+            colorArm.setPosition(cArmStart);
+        }
     }
 
     /**
@@ -264,8 +268,8 @@ public class HardwareHelper {
 
 
         /* Get the Gyro */
-        if ( robotType == AUTOTEST || robotType == FULLAUTO ) {
-            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
+        if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST) {
+           //gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
 
         }
 
@@ -284,8 +288,8 @@ public class HardwareHelper {
         double stopTime = runtime.seconds() + timeoutS;
 
         do {
-            //zValue = gyro.getIntegratedZValue();
             gHeading = gyro.getHeading();
+            //zValue = gyro.getIntegratedZValue();
             //heading360 = zValue % 360;
 //            if ( heading360 > 0 )
 //                absHeading = heading360;
@@ -320,6 +324,7 @@ public class HardwareHelper {
             leftBackDrive.setPower(leftPower);
             rightMidDrive.setPower(rightPower);
             rightBackDrive.setPower(rightPower);
+            gHeading = gyro.getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
