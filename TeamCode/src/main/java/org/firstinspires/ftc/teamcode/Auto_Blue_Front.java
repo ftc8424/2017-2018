@@ -35,11 +35,10 @@ public class Auto_Blue_Front extends LinearOpMode {
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
-        /*robot.gyro.calibrate();
-        while(!isStopRequested() && robot.gyro.isCalibrating()){
+            while(!isStopRequested() && robot.gyro.isCalibrating()){
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
-        }*/
+        }
         telemetry.addData("Init:", "Calibrated!!");
         telemetry.update();
         waitForStart();
@@ -73,7 +72,7 @@ public class Auto_Blue_Front extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
 
-        if (robot.gyroTurn(this, 270, 5) == false) {
+        /*if (robot.gyroTurn(this, 270, 5) == false) {
             telemetry.addData("Gyro", "turn unsuccessful");
             telemetry.update();
             return;
@@ -82,6 +81,7 @@ public class Auto_Blue_Front extends LinearOpMode {
         robot.encoderDrive(this, driveSpeed, 34, 34, 10);
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 5);
+        */
 
         // TODO Complete Blue Auto with deliver glyph
 

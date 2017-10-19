@@ -44,7 +44,7 @@ public class Auto_Red_Front extends LinearOpMode {
         telemetry.addData("Init:", "Calibrated!!");
         telemetry.update();
         waitForStart();
-
+        robot.color.enableLed(true);
         robot.deploy(robot.colorArm);
 
         sleep(100);
@@ -60,21 +60,23 @@ public class Auto_Red_Front extends LinearOpMode {
             telemetry.addData("Color", "blue");
             telemetry.update();
             robot.encoderDrive(this, 0.25, -turnInch, turnInch ,2);
+            sleep(1000);
             robot.encoderDrive(this, 0.25, turnInch, -turnInch, 2);
         } else if (robot.color.red() > 0 && robot.color.red() > robot.color.blue()) {
             telemetry.addData("Color", "red");
             telemetry.update();
             robot.encoderDrive(this, 0.25, turnInch, -turnInch, 2);
+            sleep(1000);
             robot.encoderDrive(this, 0.25, -turnInch, turnInch, 2);
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
         }
-          robot.deploy(robot.colorArm);
+        robot.deploy(robot.colorArm);
 
         if ( !opModeIsActive() ) return;
 
-        if (robot.gyroTurn(this, 90, 5) == false){
+        /* if (robot.gyroTurn(this, 90, 5) == false){
            telemetry.addData("Gyro", "turn unsuccessful");
            telemetry.update();
            return;
@@ -83,7 +85,7 @@ public class Auto_Red_Front extends LinearOpMode {
         robot.encoderDrive(this, driveSpeed, 34, 34, 10);
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 5);
-
+    */
         // TODO Complete Red Auto with deliver glyph
 
     }

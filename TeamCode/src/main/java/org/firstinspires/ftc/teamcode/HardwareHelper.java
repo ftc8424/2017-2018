@@ -58,7 +58,7 @@ public class HardwareHelper {
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.6;
+    public static final double cArmDeploy = 0.55;
     public static final double lpushDeploy = 0.000000000000001;
     public static final double rpushStart = 0.4;
     public static final double rpushDeploy = 0.9999999999999999999999999999999;
@@ -448,7 +448,7 @@ statements are true than the code will stop working, 2. I don't know what else.
         int newRightMidTarget;
         int newLeftBackTarget;
         int newRightBackTarget;
-        int getHeading = gyro.getIntegratedZValue();
+        //int getHeading = gyro.getIntegratedZValue();
         long encoderTimeout = 2000;   // Wait no more than two seconds, an eternity, to set
 
         if ( !caller.opModeIsActive() )
@@ -538,7 +538,7 @@ statements are true than the code will stop working, 2. I don't know what else.
                 leftPower = speed;
                 rightPower = speed;
             }
-            HeadingLoop = gyro.getIntegratedZValue();
+            //HeadingLoop = gyro.getIntegratedZValue();
 //            if (runtime.milliseconds() > lastSetTime + 250){
 //                if(getHeading > HeadingLoop + 5 ){
 //                    leftPower += 0.05;
@@ -561,7 +561,7 @@ statements are true than the code will stop working, 2. I don't know what else.
                 leftMidDrive.setPower(leftPower);
                 rightMidDrive.setPower(rightPower);
             }
-            caller.telemetry.addData("Power:", "Left Power %.2f, Right Power %.2f, Gyro %d %d", leftPower, rightPower, getHeading, HeadingLoop);
+            caller.telemetry.addData("Power:", "Left Power %.2f, Right Power %.2f", leftPower, rightPower);
             caller.telemetry.update();
 //            caller.telemetry.addLine("Drives-TO ")
 //                    .addData("POS ", "%7d : %7d : %7d : %7d",
