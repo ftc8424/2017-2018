@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -58,7 +59,7 @@ public class HardwareHelper {
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.55;
+    public static final double cArmDeploy = 0.525;
     public static final double lpushDeploy = 0.000000000000001;
     public static final double rpushStart = 0.4;
     public static final double rpushDeploy = 0.9999999999999999999999999999999;
@@ -269,7 +270,7 @@ public class HardwareHelper {
 
         /* Get the Gyro */
         if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST) {
-           //gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
+           gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
 
         }
 
@@ -284,7 +285,7 @@ public class HardwareHelper {
         int deltaHeading;
         double rightPower;
         double leftPower;
-        double turnspeed = 0.1;
+        double turnspeed = 0.175;
         double stopTime = runtime.seconds() + timeoutS;
 
         do {
@@ -320,16 +321,20 @@ public class HardwareHelper {
                 leftPower = turnspeed;
                 rightPower = -turnspeed;
             }
-            leftMidDrive.setPower(leftPower);
+            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+                leftMidDrive.setPower(leftPower);
+                rightMidDrive.setPower(rightPower);
+            }
             leftBackDrive.setPower(leftPower);
-            rightMidDrive.setPower(rightPower);
             rightBackDrive.setPower(rightPower);
             gHeading = gyro.getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
-        leftMidDrive.setPower(0.0);
-        rightMidDrive.setPower(0.0);
+        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+            leftMidDrive.setPower(0.0);
+            rightMidDrive.setPower(0.0);
+        }
         leftBackDrive.setPower(0.0);
         rightBackDrive.setPower(0.0);
 //        if ( deltaHeading <= 1 )

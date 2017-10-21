@@ -36,56 +36,63 @@ public class Auto_Red_Front extends LinearOpMode {
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
-        /*robot.gyro.calibrate();
+        robot.gyro.calibrate();
         while(!isStopRequested() && robot.gyro.isCalibrating()){
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
-        }*/
+        }
         telemetry.addData("Init:", "Calibrated!!");
         telemetry.update();
         waitForStart();
-        robot.color.enableLed(true);
+        //robot.color.enableLed(true);
         robot.deploy(robot.colorArm);
 
-        sleep(100);
-        blueValue = robot.color.blue();
-        redValue = robot.color.red();
-        telemetry.addData("ColorValue:", "Blue-%d Red-%d", blueValue , redValue);
-        telemetry.update();
-        sleep(5000);
+        sleep(1500);
         if ( !opModeIsActive() ) return;
-
-        double turnInch = 0.5;
-        if (robot.color.blue() > 0 && robot.color.blue() > robot.color.red()) {
+        robot.color.enableLed(true);
+        double turnInch = 2;
+        double colorTimer = runtime.milliseconds();
+        do {
+            sleep(10);
+            blueValue = robot.color.blue();
+            redValue = robot.color.red();
+            telemetry.addData("color blue", blueValue);
+            telemetry.addData("color red", redValue);
+            telemetry.update();
+        }while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
+        robot.color.enableLed(false);
+        if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.update();
-            robot.encoderDrive(this, 0.25, -turnInch, turnInch ,2);
-            sleep(1000);
-            robot.encoderDrive(this, 0.25, turnInch, -turnInch, 2);
-        } else if (robot.color.red() > 0 && robot.color.red() > robot.color.blue()) {
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
+            robot.deploy(robot.colorArm);
+            sleep(100);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+        } else if ( blueValue < redValue ) {
             telemetry.addData("Color", "red");
             telemetry.update();
-            robot.encoderDrive(this, 0.25, turnInch, -turnInch, 2);
-            sleep(1000);
-            robot.encoderDrive(this, 0.25, -turnInch, turnInch, 2);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            robot.deploy(robot.colorArm);
+            sleep(100);
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
+            robot.deploy(robot.colorArm);
+            sleep(100);
         }
-        robot.deploy(robot.colorArm);
 
         if ( !opModeIsActive() ) return;
 
-        /* if (robot.gyroTurn(this, 90, 5) == false){
-           telemetry.addData("Gyro", "turn unsuccessful");
-           telemetry.update();
-           return;
-       }
+        if (robot.gyroTurn(this, 270, 5) == false) {
+            telemetry.addData("Gyro", "turn unsuccessful");
+            telemetry.update();
+        }
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 34, 34, 10);
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 5);
-    */
+
         // TODO Complete Red Auto with deliver glyph
 
     }
