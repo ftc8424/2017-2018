@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_SERVOTEST;
 
 /**
  * Created by FTC8424 on 10/13/2016.
@@ -47,14 +49,14 @@ public class HardwareHelper {
     public DcMotor     rightMidDrive = null;  private static final String cfgRMidDrive   = "R Mid";
     public DcMotor     leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
     public DcMotor     rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
-    public Servo       rightManip = null; private static final String  cfgrightManip = "R Manip";
-    public Servo       leftManip = null; private static final String  cfgleftManip = "L Manip";
+    public DcMotor       rightManip = null; private static final String  cfgrightManip = "R Manip";
+    public DcMotor       leftManip = null; private static final String  cfgleftManip = "L Manip";
     public Servo        colorArm = null; private static final String cfgcolorArm = "C Arm";
-    public DcMotor     rightLift = null; private static final String  cfgrightLift = "R Lift";
-    public DcMotor     leftLift = null; private static final String  cfgleftLift = "L Lift";
+    public DcMotor     lift = null; private static final String  cfgLift = "Lift";
     public DcMotor     rpCenter = null; private static final String cfgrpCenter = "RPC";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
+    public Servo       servotest = null; private static final String cfgServoTest = "servo";
 
     /* Servo positions, adjust as necessary. */
     public static final double lpushStart = 0.6;
@@ -81,7 +83,8 @@ public class HardwareHelper {
 
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
-        FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP
+        FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
+        TROLLBOT_SERVOTEST
     }
 
     /*
@@ -183,11 +186,18 @@ public class HardwareHelper {
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
-                leftLift = hwMap.dcMotor.get(cfgleftLift);
-                rightLift = hwMap.dcMotor.get(cfgrightLift);
-                leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
-                rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
-                rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
+                lift = hwMap.dcMotor.get(cfgLift);
+               if (robotType == FULLTELEOP) {
+                   leftManip = hwMap.dcMotor.get(cfgleftManip);
+                   rightManip = hwMap.dcMotor.get(cfgrightManip);
+                   rightManip.setDirection(DcMotor.Direction.REVERSE);
+               } else {
+                   leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
+                   rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
+                   rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
+
+               }
+
             }
 
             /*
@@ -215,26 +225,18 @@ public class HardwareHelper {
                 }
             }
         }
-        if ( robotType == TROLLBOTMANIP) {
-            leftLift = hwMap.dcMotor.get(cfgleftLift);
-            rightLift = hwMap.dcMotor.get(cfgrightLift);
-            leftLift.setDirection(DcMotor.Direction.REVERSE);
-            rightLift.setPower(0);
-            leftLift.setPower(0);
-            //rpCenter.setPower(0);
-        }
-         /* Now that hardware is mapped, set to initial positions/settings. */
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
-        if ( robotType == FULLTELEOP || robotType == FULLAUTO || robotType == TROLLBOT ) {
-            leftMidDrive.setPower(0);
-            rightMidDrive.setPower(0);
 
+         /* Now that hardware is mapped, set to initial positions/settings. */
+        if ( robotType != TROLLBOT_SERVOTEST ) {
+            leftBackDrive.setPower(0);
+            rightBackDrive.setPower(0);
+            if ( robotType == FULLTELEOP || robotType == FULLAUTO || robotType == TROLLBOT ) {
+                leftMidDrive.setPower(0);
+                rightMidDrive.setPower(0);
+
+            }
         }
-        isLauncherRunning = false;
-        if ( robotType != TROLLBOT )
-            //initLaunchArray();
-            prevEncoderSaved = 0;
+          prevEncoderSaved = 0;
         prevTimeSaved = 0;
     }
 
@@ -242,14 +244,11 @@ public class HardwareHelper {
      * This method is used to initialize servos and set their positions.
      */
     private void initServo() {
-        if ( robotType == TROLLBOTMANIP) {
-            leftManip = hwMap.servo.get(cfgleftManip);
-            rightManip = hwMap.servo.get(cfgrightManip);
-            leftManip.setPosition(lmanip);
-            rightManip.setPosition(rmanip);
-            //rpCenter.setPower(0);
+        if ( robotType == TROLLBOT_SERVOTEST ) {
+            servotest = hwMap.servo.get(cfgServoTest);
         }
-        if ( robotType == COLORTEST) {
+
+        if ( robotType == COLORTEST || robotType == FULLTELEOP) {
             colorArm = hwMap.servo.get(cfgcolorArm);
             colorArm.setPosition(cArmStart);
         }
@@ -261,7 +260,7 @@ public class HardwareHelper {
     private void initSensor() {
 
         /* Set the sensors based on type */
-        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ) {
+        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO || robotType == FULLTELEOP) {
             color = hwMap.colorSensor.get(cfgrpColorSensor);
         }
 
@@ -636,7 +635,7 @@ statements are true than the code will stop working, 2. I don't know what else.
     public void normalDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == FULLTELEOP || robotType == TROLLBOT ) {
+        if ( robotType == TROLLBOT ) {
             leftMidDrive.setPower(leftPower);
             rightMidDrive.setPower(rightPower);
         }

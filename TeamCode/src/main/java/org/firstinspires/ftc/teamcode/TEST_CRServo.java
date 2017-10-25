@@ -34,11 +34,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_SERVOTEST;
 
 /**
  * Created by FTC8424 on 9/15/2016.
@@ -57,13 +57,13 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMA
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name="TrollbotManip", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="TEST CR Servo", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
 
-public class TeleOp_Trollbot_Manip extends OpMode {
+public class TEST_CRServo extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private HardwareHelper robot = new HardwareHelper(TROLLBOTMANIP);
+    private HardwareHelper robot = new HardwareHelper(TROLLBOT_SERVOTEST);
 
 //    private Servo LPush;
 //    double LPushStart = 0.1;
@@ -73,8 +73,7 @@ public class TeleOp_Trollbot_Manip extends OpMode {
     private double LservoUpTime = 0;
     private double RservoUpTime = 0;
     private double powerSetTime = 0;
-    private boolean manipMoving = false;
-    private double lastManipTime = 0;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -109,7 +108,10 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        double rightStickVal = -gamepad1.right_stick_y;
+        double leftStickVal = Range.clip(gamepad1.left_stick_y, -1.0, 1.0);
+        robot.servotest.setPosition(leftStickVal);
+        telemetry.addData("Setting Servo:", leftStickVal);
+        /*double rightStickVal = -gamepad1.right_stick_y;
         double leftStickVal = -gamepad1.left_stick_y;
         double rightSquaredVal = rightStickVal * rightStickVal;
         double leftSquaredVal = leftStickVal * leftStickVal;
@@ -124,67 +126,12 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
         if (rightStickVal < 0) rightSquaredVal = -rightSquaredVal;
         if (leftStickVal < 0) leftSquaredVal = -leftSquaredVal;
-        robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
-
 
         if (Math.abs(leftSquaredSide) > 0.1 || Math.abs(rightSquaredSide) > 0.1) {
             robot.sideDrive(this, leftSquaredSide, rightSquaredSide);
-        }
-
-        int speed = 0;
-        int manipMove;
-        if (gamepad2.y && lastManipTime + 1 < runtime.seconds()) {
-            if (manipMoving){
-                robot.leftManip.setPosition(0.5);
-                robot.rightManip.setPosition(0.5);
-                manipMoving = false;
-            } else{
-                robot.leftManip.setPosition(1);
-                robot.rightManip.setPosition(0);
-                manipMoving = true;
-            }
-            lastManipTime = runtime.seconds();
-        }
-
-        if (gamepad2.x && lastManipTime + 1 < runtime.seconds()) {
-            if (manipMoving) {
-                robot.leftManip.setPosition(0.5);
-                robot.rightManip.setPosition(0.5);
-                manipMoving = false;
-            } else {
-                robot.leftManip.setPosition(0);
-                robot.rightManip.setPosition(1);
-                manipMoving = true;
-            }
-            lastManipTime = runtime.seconds();
-
-        }
-        if(gamepad2.dpad_up) {
-            robot.leftManip.setPosition(1);
-            robot.rightManip.setPosition(-1);
-        } else if(gamepad2.dpad_down) {
-            robot.leftManip.setPosition(1);
-            robot.rightManip.setPosition(1);
         } else {
-            robot.leftManip.setPosition(0);
-            robot.rightManip.setPosition(0);
+            robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
         }
-
-
-        //if(gamepad2.dpad_up) {
-        //    robot.leftLift.setPower(-0.25);
-          //  robot.rightLift.setPower(-0.25);
-        //} else if(gamepad2.dpad_down) {
-          //  robot.leftLift.setPower(0.25);
-            //robot.rightLift.setPower(0.25);
-        //} else {
-          //  robot.leftLift.setPower(0);
-            //robot.rightLift.setPower(0);
-        //}
-
-
-
-
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
 
         telemetry.addData("Path0", "Position at %7d :%7d",
@@ -193,9 +140,7 @@ public class TeleOp_Trollbot_Manip extends OpMode {
 
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
 
-        {
-
-/*    Not needed on current Trollbot, has no servos.
+*//*    Not needed on current Trollbot, has no servos.
 
         if (gamepad1.left_bumper && LservoUpTime + 2 < runtime.seconds()) {
             //robot.lpushStart robot.lpushDeploy
@@ -221,18 +166,18 @@ public class TeleOp_Trollbot_Manip extends OpMode {
             RservoUpTime = runtime.seconds();
         }
         telemetry.addData("Servo", "2 rightPush Servo Set to " + robot.rightPush.getPosition());
-*/
+*//*
 
         telemetry.addData("Status", "Debug 4 at: " + runtime.toString());
-
+*/
     }  // loop
 
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
-    //@Override
-    //public void stop() {
+    @Override
+    public void stop() {
         robot.normalDrive(this, 0, 0);
     }
 }
