@@ -67,6 +67,8 @@ public class TeleOp extends OpMode {
 //    double LPushStart = 0.1;
 //    double LPushEnd = 0.9;
 //    double LPushPower = 1.1;
+    long LiftMaxHeight =  3360 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftCurrentPosition= 0;
 
     private double LservoUpTime = 0;
     private double RservoUpTime = 0;
@@ -151,13 +153,41 @@ public class TeleOp extends OpMode {
             lastManipTime = runtime.seconds();
 
         }*/
-        if(gamepad2.dpad_up) {
-            robot.lift.setPower(-0.25);
+
+
+        /*THIS IS WHAT NEEDS TO BE CODED AS PER COACH JERRY:
+            When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
+            as the gamepad2.dpad is held down. When it is not held down, it stops moving. The code
+            needs to have a restriction, so that the rope doesn't cause the motor to burn out. Also,
+            when the gamepad2.dpad_up is called, the code should be able to recall how many rotations
+            were made when going up, and should retrace those rotations downward to get the manipulator
+            to its starting position, that way no motors get burnt out, and there can be a single starting
+            point for the simplicty of the code, and the driver controlling that part of the robot.
+            */
+        /*
+        long LiftMaxHeight = -1;
+        long LiftCurrentPosition= 0;
+        */
+        LiftCurrentPosition = robot.lift.getCurrentPosition();
+        if (gamepad2.dpad_up) {
+            if((LiftCurrentPosition < LiftMaxHeight - 100) || LiftMaxHeight == -1) {
+                robot.lift.setPower(-0.25);
+            }
+            else{
+                robot.lift.setPower(0);
+            }
         } else if(gamepad2.dpad_down) {
-            robot.lift.setPower(0.25);
+           if(LiftCurrentPosition > 0){
+               robot.lift.setPower(0.25);
+           }
+            else {
+               robot.lift.setPower(0);
+           }
         } else {
             robot.lift.setPower(0);
         }
+        telemetry.addData("lift position", LiftCurrentPosition);
+
 
 
         //if(gamepad2.dpad_up) {

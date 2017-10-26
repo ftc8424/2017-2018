@@ -151,6 +151,8 @@ public class HardwareHelper {
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 lift = hwMap.dcMotor.get(cfgLift);
+                waitForReset(lift, 2000);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                if (robotType == FULLTELEOP) {
                    leftManip = hwMap.dcMotor.get(cfgleftManip);
                    rightManip = hwMap.dcMotor.get(cfgrightManip);
@@ -579,6 +581,12 @@ statements are true than the code will stop working, 2. I don't know what else.
         resetOk = waitForReset(m1, m2, msTimeOut/2);
         return resetOk && waitForReset(m3, m4, msTimeOut/2);
     }
+    public boolean waitForReset(DcMotor m1, long msTimeOut) {
+        boolean resetOk = false;
+
+        resetOk = waitForReset(m1, null, msTimeOut);
+        return resetOk ;
+    }
 
     /**
      * Waits for the encoders to be reset on the 2 motors and returns a boolean as to whether
@@ -592,14 +600,22 @@ statements are true than the code will stop working, 2. I don't know what else.
      * @return          Whether the reset was successful or not
      */
     public boolean waitForReset(DcMotor m1, DcMotor m2, long msTimeOut) {
-        m1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int m1Pos = m1.getCurrentPosition();
-        int m2Pos = m2.getCurrentPosition();
+        int m2Pos = 0 ;//m2.getCurrentPosition();
+        m1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(m2 != null){
+            m2Pos = m2.getCurrentPosition();
+            m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+
         double stopTime = runtime.milliseconds() + msTimeOut;
         while ( (m1Pos != 0 || m2Pos != 0) && runtime.milliseconds() < stopTime ) {
             m1Pos = m1.getCurrentPosition();
-            m2Pos = m2.getCurrentPosition();
+            if(m2 != null){
+                m2Pos = m2.getCurrentPosition();
+            }
+
         }
         return m1Pos == 0 && m2Pos == 0;
     }
