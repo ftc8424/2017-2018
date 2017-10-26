@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,16 +28,6 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_S
  * This class assumes that the following hardware components have been given the following
  * names in the configuration file.  If they have not, then bad things will happen.
  *
- * Left Middle Drive Motor:    "L Mid"
- * Right Middle Drive Motor:   "R Mid"
- * Left Back Drive Motor:      "L Back"
- * Right Back Drive Motor:     "R Back"
- * Left Push Button Servo:     "L Push"  (servo)
- * Right Push Button Servo:    "R Push"
- * Color Sensor:               "color"
- * Launcher Motor:             "Launcher"
- * Lift for Launcher Servo:    "LaunchServo"
- *
  */
 
 public class HardwareHelper {
@@ -53,31 +41,13 @@ public class HardwareHelper {
     public DcMotor       leftManip = null; private static final String  cfgleftManip = "L Manip";
     public Servo        colorArm = null; private static final String cfgcolorArm = "C Arm";
     public DcMotor     lift = null; private static final String  cfgLift = "Lift";
-    public DcMotor     rpCenter = null; private static final String cfgrpCenter = "RPC";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
     public Servo       servotest = null; private static final String cfgServoTest = "servo";
 
     /* Servo positions, adjust as necessary. */
-    public static final double lpushStart = 0.6;
     public static final double cArmStart = 0;
     public static final double cArmDeploy = 0.525;
-    public static final double lpushDeploy = 0.000000000000001;
-    public static final double rpushStart = 0.4;
-    public static final double rpushDeploy = 0.9999999999999999999999999999999;
-    public static final double rlift = 0.5;
-    public static final double rmanip = 0.5;
-    public static final double llift = 0.5;
-    public static final double lmanip = 0.5;
-    //public static final double launchliftStart = .80;
-    //public static final double launchliftDeploy = 0.1;
-    private static final int Samplesize = 250;
-    private int[] encTicks = new int[Samplesize];
-    private double[] encTime = new double [Samplesize];
-    private int encIndex = 0;
-    private double launchStarted = 0;
-    private int launchEncoderStart = 0;
-    private boolean isLauncherRunning = false;
 
 
 
@@ -99,23 +69,17 @@ public class HardwareHelper {
 
     private static final int    COUNTS_PER_LAUNCHER  = 3600; // AndyMark NeveRest 3.7:1, ideal
 
-//    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-//    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-//    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-//    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-//            (WHEEL_DIAMETER_INCHES * 3.1415);
-
     private static final double encoderInch = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265);
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-//    static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
-//    static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
-//
-//    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
-//    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-//    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
+    static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
+    static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
+
+    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
+    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
     /* Other privates for things such as the runtime, the hardware Map, etc. */
     private RobotType robotType;
@@ -202,13 +166,13 @@ public class HardwareHelper {
 
             /*
              * If autonomous, then reset encoders and set mode to be with encoders
-                    * NOTE:  This should really throw an exception or something, but all it does
-                    * is silently ignore if the resetting of the encoders didn't work and blindly
-                    * sets the mode to be RUN_USING_ENCODER.  Can't really call telemetry because
-                    * don't have a caller to know which should build the telemetry and send.  Badness
-                    * will ensue when the actual autonomous runs and hopefully this note will help
-                    * folks figure out the failed reset might be at fault.
-                    */
+             * NOTE:  This should really throw an exception or something, but all it does
+             * is silently ignore if the resetting of the encoders didn't work and blindly
+             * sets the mode to be RUN_USING_ENCODER.  Can't really call telemetry because
+             * don't have a caller to know which should build the telemetry and send.  Badness
+             * will ensue when the actual autonomous runs and hopefully this note will help
+             * folks figure out the failed reset might be at fault.
+             */
 
             boolean resetOk = false;
             if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
@@ -236,8 +200,6 @@ public class HardwareHelper {
 
             }
         }
-          prevEncoderSaved = 0;
-        prevTimeSaved = 0;
     }
 
     /**
@@ -248,7 +210,7 @@ public class HardwareHelper {
             servotest = hwMap.servo.get(cfgServoTest);
         }
 
-        if ( robotType == COLORTEST || robotType == FULLTELEOP) {
+        if ( robotType == COLORTEST || robotType == FULLTELEOP ) {
             colorArm = hwMap.servo.get(cfgcolorArm);
             colorArm.setPosition(cArmStart);
         }
@@ -260,7 +222,7 @@ public class HardwareHelper {
     private void initSensor() {
 
         /* Set the sensors based on type */
-        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO || robotType == FULLTELEOP) {
+        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO || robotType == FULLTELEOP ) {
             color = hwMap.colorSensor.get(cfgrpColorSensor);
         }
 
@@ -268,12 +230,26 @@ public class HardwareHelper {
 
 
         /* Get the Gyro */
-        if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST) {
+        if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
 
         }
 
     }
+
+    /**
+     * TODO THIS ROUTINE NEEDS TO BE REPLACED
+     *
+     * The code shuld come from the PushbotAutoDriveByGyro.java file as well as the helper
+     * methods such as onHeading, gyroHold, etc., but it needs to take into account the robotType
+     * so that it only sends power to the appropriate motors.
+     *
+     * @param caller
+     * @param heading
+     * @param timeoutS
+     * @return
+     * @throws InterruptedException
+     */
     public boolean gyroTurn(LinearOpMode caller,
                             int heading,
                             double timeoutS) throws InterruptedException {
@@ -382,50 +358,6 @@ public class HardwareHelper {
 statements are true than the code will stop working, 2. I don't know what else.
  */
 
-
-
-
-
-
-//    public boolean gyroTurn(LinearOpMode caller,
-//                            int heading,
-//                            double timeoutS) throws InterruptedException {
-//        int curHeading = gyro.getIntegratedZValue();
-//        int curHeading360 = curHeading % 360;
-//        double turnspeed = 0.10;
-//        int relPosition = heading - curHeading360;
-//        int targetHeading = curHeading + relPosition;
-//        double stopTime = runtime.seconds() + timeoutS;
-//
-//        if (relPosition < 0) {
-//            do {
-//                leftMidDrive.setPower(-turnspeed);
-//                rightMidDrive.setPower(turnspeed);
-//                leftBackDrive.setPower(-turnspeed);
-//                rightBackDrive.setPower(turnspeed);
-//                curHeading = gyro.getIntegratedZValue();
-//                caller.telemetry.addData("gyroTurn:", "Turning to %d, currently at %d", targetHeading, curHeading);
-//                caller.telemetry.update();
-//            }
-//            while (caller.opModeIsActive() && Math.abs(curHeading - targetHeading) > 1 && runtime.seconds() < stopTime);
-//        } else {
-//            do {
-//                leftMidDrive.setPower(turnspeed);
-//                rightMidDrive.setPower(-turnspeed);
-//                leftBackDrive.setPower(turnspeed);
-//                rightBackDrive.setPower(-turnspeed);
-//                curHeading = gyro.getIntegratedZValue();
-//                caller.telemetry.addData("gyroTurn:", "Turning to %d, currently at %d", targetHeading, curHeading);
-//                caller.telemetry.update();
-//            }
-//            while (caller.opModeIsActive() && Math.abs(curHeading - targetHeading) > 1 && runtime.seconds() < stopTime);
-//        }
-//        leftMidDrive.setPower(0.0);
-//        rightMidDrive.setPower(0.0);
-//        leftBackDrive.setPower(0.0);
-//        rightBackDrive.setPower(0.0);
-//        return Math.abs(gyro.getIntegratedZValue() - targetHeading) <= 1;
-//    }
     /**
      * Drive by the encoders, running to a position relative to the current position based
      * on encoder ticks for a left and right motor.  It will move to a position for a specified
@@ -457,8 +389,6 @@ statements are true than the code will stop working, 2. I don't know what else.
 
         if ( !caller.opModeIsActive() )
             return;
-
-
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -542,19 +472,6 @@ statements are true than the code will stop working, 2. I don't know what else.
                 leftPower = speed;
                 rightPower = speed;
             }
-            //HeadingLoop = gyro.getIntegratedZValue();
-//            if (runtime.milliseconds() > lastSetTime + 250){
-//                if(getHeading > HeadingLoop + 5 ){
-//                    leftPower += 0.05;
-//                    rightPower -= 0.05;
-//                    lastSetTime = runtime.milliseconds();
-//
-//                } else if (getHeading < HeadingLoop +5){
-//                    leftPower -= 0.05;
-//                    rightPower += 0.05;
-//                    lastSetTime = runtime.milliseconds();
-//                }
-//            }
 
             leftPower = Range.clip(leftPower, -1.0, 1.0);
             rightPower = Range.clip(rightPower, -1.0, 1.0);
@@ -567,11 +484,6 @@ statements are true than the code will stop working, 2. I don't know what else.
             }
             caller.telemetry.addData("Power:", "Left Power %.2f, Right Power %.2f", leftPower, rightPower);
             caller.telemetry.update();
-//            caller.telemetry.addLine("Drives-TO ")
-//                    .addData("POS ", "%7d : %7d : %7d : %7d",
-//                            newLeftMidTarget, newRightMidTarget,
-//                            newLeftBackTarget, newRightBackTarget);
-//            caller.telemetry.update();
             lbCurPos = leftBackDrive.getCurrentPosition();
             rbCurPos = rightBackDrive.getCurrentPosition();
             if ( robotType == FULLAUTO ) {
@@ -581,10 +493,6 @@ statements are true than the code will stop working, 2. I don't know what else.
                 lmCurPos = Integer.MAX_VALUE;
                 rmCurPos = Integer.MAX_VALUE;
             }
-//            caller.telemetry.addLine("Drives-CUR ")
-//                    .addData("POS ", "%7d : %7d : %7d : %7d",
-//                            lmCurPos, rmCurPos, lbCurPos, rbCurPos);
-//            caller.telemetry.update();
             isBusy = (Math.abs(lbCurPos - newLeftBackTarget) >= 5) && (Math.abs(rbCurPos - newRightBackTarget) >= 5);
             if ( robotType == FULLAUTO )
                 isBusy = isBusy && (Math.abs(lmCurPos - newLeftMidTarget) >= 5) && (Math.abs(rmCurPos - newRightMidTarget) >= 5);
@@ -608,22 +516,6 @@ statements are true than the code will stop working, 2. I don't know what else.
             rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-
-//    public void GyroTurn (OpMode caller, double speed, double angle)
-//        throws InterruptedException{
-//
-//        leftBackDrive .setTargetPosition(leftBackDrive .getCurrentPosition() + (int) (-angle * DEG));
-//        leftMidDrive.setTargetPosition(leftMidDrive.getCurrentPosition() + (int) ( angle * DEG));
-//        rightBackDrive .setTargetPosition(rightBackDrive .getCurrentPosition() + (int) (-angle * DEG));
-//        rightMidDrive.setTargetPosition(rightMidDrive.getCurrentPosition() + (int) ( angle * DEG));
-//
-//        leftMidDrive .setPower(-speed);
-//        leftBackDrive.setPower( speed);
-//        rightMidDrive .setPower(-speed);
-//        rightBackDrive.setPower( speed);
-//
-//    }
-
 
     /**
      * Drive the robot forward/backward based on power settings passed in.
@@ -668,225 +560,19 @@ statements are true than the code will stop working, 2. I don't know what else.
         return hwMap.voltageSensor.iterator().next().getVoltage();
     }
 
-    /*
-     * Variables that are only used in the launcher stabilization methods.
-     */
-    private int prevEncoderSaved = 0;
-    private double prevTimeSaved = 0;
-    private double launcherStartTime = 0;
-
     /**
-     * Stop the launcher, and reset any variables as part of the launcher
-     */
-    public void stopLauncher() {
-        //launchMotor1.setPower(0.0);
-        //launchMotor2.setPower(0.0);
-        launcherStartTime = 0;
-        isLauncherRunning = false;
-    }
-
-    /**
-     * Start the launch motor and reset the variables for the automatic launch stabilization.
-     * Grab the voltage of the battery and return that voltage to the caller.
+     * Waits for the encoders to be reset on the 4 motors, and returns a boolean as to whether
+     * the motors have reset or not.  Calls waitForReset() with two motor method signature multiple
+     * times to do the actual work and combines the return values to give an overall return of
+     * true only if all four motors were properly reset.
      *
-     * @return  the current voltage of the 12V main battery
+     * @param m1    Motor 1 to reset
+     * @param m2    Motor 2 to reset
+     * @param m3    Motor 3 to reset
+     * @param m4    Motor 4 to reset
+     * @param msTimeOut The time to wait, in milliseonds, for a valid reset
+     * @return      Whether the reset was successful or not
      */
-
-    public double startLauncher() {
-        double batteryVoltage = getVoltage();
-
-        // Clear out the timing and encoder ticks arrays
-        //initLaunchArray();
-        //launchMotor1.setPower(0.65);
-        //launchMotor2.setPower(0.65);
-        isLauncherRunning = true;
-        launcherStartTime = runtime.milliseconds();
-        return batteryVoltage;
-    }
-
-    public double startLauncher(double power) {
-        double batteryVoltage = getVoltage();
-
-        // Clear out the timing and encoder ticks arrays
-        //initLaunchArray();
-        //launchMotor1.setPower(power);
-        //launchMotor2.setPower(power);
-        isLauncherRunning = true;
-        launcherStartTime = runtime.milliseconds();
-        return batteryVoltage;
-    }
-
-    /**
-     * Run the launcher to shoot two balls in Autonomous.  Written by Kim Tan and Mohana Chavan.
-     * It launches the motor, allows 1.75 seconds to get up to speed, shoots a ball, allows another
-     * 1.25 seconds to get back up to speed and launches the second.  Waits a half-second and
-     * then shuts everything down and returns.
-     *
-     * It uses startLauncher() so that the power that the launch motor will be running at is
-     * automatically set based on the voltage of the main battery.  It also automatically adjusts
-     * the wait time before launching based on the voltage of the battery.
-     *
-     * @param caller  he "this" from caller, so I can run telemetry
-     * @throws InterruptedException     If the sleep call is interrupted
-     */
-    public void autoLauncher(LinearOpMode caller, double power) throws InterruptedException {
-
-        if ( !caller.opModeIsActive() ) return;
-
-
-        double volts = startLauncher(power);
-//        caller.telemetry.addData("Launch Motor", "Bat Voltage is %.2f / Power at %.2f",
-//                volts, launchMotor.getPower());
-//        caller.telemetry.update();
-        while (caller.opModeIsActive() &&  ! adjustLaunchSpeed(caller)) {
-
-            //caller.telemetry.addData("Launch Motor1", " Power at %.2f", launchMotor1.getPower());
-            //caller.telemetry.addData("Launch Motor2", " Power at %.2f", launchMotor2.getPower());
-            caller.telemetry.update();
-
-        }
-            ;
-        long sleepTime;
-        if ( volts < 12.4 )
-               sleepTime = 1500;
-        else if ( volts < 12.6 )
-                sleepTime = 1000;
-        else if ( volts < 12.8 )
-                sleepTime = 900;
-        else
-            sleepTime = 750;
-        caller.telemetry.addData("Launch Motor", "Waiting %.2f Secs to spin-up", sleepTime / 1000.0);
-        caller.telemetry.update();
-        caller.sleep(sleepTime);
-        //caller.telemetry.addData("Launch Motor", "Bat Voltage is %.2f / Power at %.2f",
-                //volts, launchMotor1.getPower());
-        //caller.telemetry.update();
-        //.setPower(1); // Shoot the first ball
-        //initLaunchArray();
-        //caller.sleep(2200);
-        //if ( !caller.opModeIsActive() ) return;
-        //launchLift.setPower(0);
-        //stopLauncher();
-    }
-
-    /**
-     * Initialize the variables used in the automatic Launch motor stabilization code.  This should
-     * be run at any time we start the launch motor *and* any time that the power to the motor is
-     * adjusted, so that when we check to see if it's stabilized we're dealing with fresh buckets
-     * each time.
-     */
-    private void initLaunchArray() {
-        for (int i = 0; i < Samplesize; i++) {
-            encTicks[i] = 0;
-            encTime[i] = 0;
-        }
-        encIndex = 0;
-        //prevEncoderSaved = launchMotor1.getCurrentPosition();
-        //prevEncoderSaved = launchMotor2.getCurrentPosition();
-        prevTimeSaved = runtime.milliseconds();
-    }
-
-    /**
-     * Get the ticks from the launch encoder and save those in the next available bucket, if
-     * necessary.  This is a key component in the automatic launch motor stabilization procedures.
-     * It won't save anything if the value for the encoder ticks hasn't changed, which happens
-     * in a regular OpMode about once in every three tries.
-     *
-     * It saves the delta in encoder ticks and time from the previous time getTicks() was
-     * successfully called and returns whether it saved a value or not.
-     *
-     * @return    true if a value was saved in the bucket, false otherwise
-     */
-    private boolean getTicks() {
-        if ( ! isLauncherRunning ) return false;
-        int curEncoder = 0;
-        double  curTime = runtime.milliseconds();
-
-        if (prevEncoderSaved - curEncoder == 0 )
-            return false;
-
-        encTime[encIndex] = curTime - prevTimeSaved;
-        encTicks[encIndex] = Math.abs(curEncoder - prevEncoderSaved);
-        prevEncoderSaved = curEncoder;
-        prevTimeSaved = curTime;
-        encIndex = (encIndex == Samplesize-1) ? 0 : encIndex + 1;
-        return true;
-    }
-
-   /**
-     * Adjust the speed of the launch motor to get what we want out of the launcher before
-     * we start launching.  We will return true if we are within our tolerance of where we
-     * want to be, which is approximately 1,060 encoder ticks per second.
-     *
-     * @return  true if we're at optimum power, false if we're not (and adjusting)
-     * @throws InterruptedException
-     */
-    public boolean adjustLaunchSpeed(OpMode caller) throws InterruptedException {
-        if ( isLauncherRunning && launcherStartTime == 0 ) {
-            launcherStartTime = runtime.milliseconds();
-            return false;
-        } else if ( isLauncherRunning && launcherStartTime + 500 < runtime.milliseconds() ) {
-            //launchMotor1.setPower(1.0);
-            //launchMotor2.setPower(1.0);
-            return true;
-        }else {
-            return false;
-        }
-
-      /*
-        if (!getTicks())
-            return false;
-        int totalTicks = 0;
-        double totalTime  = 0;
-        int count = 0;
-        for (int i = 0; i < Samplesize; i++) {
-            totalTicks = totalTicks + encTicks[i];
-            totalTime  = totalTime  + encTime[i];
-            if ( encTicks[i] > 0 ) count++;
-        }
-
-        int last = (encIndex == 0) ? Samplesize-1 : encIndex - 1;
-        int TicksAvg = totalTicks / count;
-        long TimeAvg = Math.round(totalTime / count);
-        double timeInSecs = TimeAvg / 1000.0;
-        long ticksInSecs = Math.round(TicksAvg / timeInSecs);
-        caller.telemetry.addData("adjustLaunchSpeed", "TicksAvg %d, TimeAvg %d, timeInSecs %.2f, ticksInSecs: %d, Count: %d",
-                TicksAvg, TimeAvg, timeInSecs, ticksInSecs, count);
-        caller.telemetry.update();
-
-        if ( count <= (Samplesize / 2) ) return false;    // Not large enough, keep going.
-
-        if (Math.abs(encTicks[0] - TicksAvg) <= 100) {
-            if (Math.abs(ticksInSecs - COUNTS_PER_LAUNCHER) <= 100) {
-                return true;
-            } else if (ticksInSecs > COUNTS_PER_LAUNCHER && launchMotor.getPower() > 0.1) {
-                launchMotor.setPower(launchMotor.getPower() - 0.05);
-                initLaunchArray();    // Clear out buckets, so we can see if new power is right
-                return false;
-            } else {
-                launchMotor.setPower(launchMotor.getPower() + 0.05);
-                initLaunchArray();    // Clear out buckets, so we can see if new power is right
-                return false;
-            }
-        } else {
-            return false;
-        }
-      */
-   }
-
-        /**
-         * Waits for the encoders to be reset on the 4 motors, and returns a boolean as to whether
-         * the motors have reset or not.  Calls waitForReset() with two motor method signature multiple
-         * times to do the actual work and combines the return values to give an overall return of
-         * true only if all four motors were properly reset.
-         *
-         * @param m1    Motor 1 to reset
-         * @param m2    Motor 2 to reset
-         * @param m3    Motor 3 to reset
-         * @param m4    Motor 4 to reset
-         * @param msTimeOut The time to wait, in milliseonds, for a valid reset
-         * @return      Whether the reset was successful or not
-         */
     public boolean waitForReset(DcMotor m1, DcMotor m2, DcMotor m3, DcMotor m4, long msTimeOut) {
         boolean resetOk = false;
 
@@ -944,10 +630,6 @@ statements are true than the code will stop working, 2. I don't know what else.
         return m1Pos == target;
     }
 }
-
-
-        // keep looping while we are still active, and not on heading.
-
 
 /************************************************************************************************
  * For encoder math, here is the information from AndyMark's web site, so it will be key in
