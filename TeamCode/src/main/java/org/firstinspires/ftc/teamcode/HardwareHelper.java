@@ -499,10 +499,6 @@ public class HardwareHelper {
         return m1Pos == 0 && m2Pos == 0;
     }
 
-    /****************************************************************************************
-     * Private methods follow.
-     ****************************************************************************************/
-
     /**
      * Sets the target encoder position for this particular motor and waits to ensure that the
      * position was properly set.  If it didn't set correctly, within the timeOut (in milliseconds)
@@ -662,6 +658,10 @@ public class HardwareHelper {
         rightBackDrive.setPower(0);
     }
 
+    /****************************************************************************************
+     * Private methods follow.
+     ****************************************************************************************/
+
     /**
      * Perform one cycle of closed loop heading control.
      *
@@ -672,7 +672,7 @@ public class HardwareHelper {
      * @param PCoeff    Proportional Gain coefficient
      * @return
      */
-    boolean onHeading(LinearOpMode caller, double speed, double angle, double PCoeff) {
+    private boolean onHeading(LinearOpMode caller, double speed, double angle, double PCoeff) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -712,7 +712,7 @@ public class HardwareHelper {
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      *          +ve error means the robot should turn LEFT (CCW) to reduce error.
      */
-    public double getError(double targetAngle) {
+    private double getError(double targetAngle) {
 
         double robotError;
 
@@ -729,7 +729,7 @@ public class HardwareHelper {
      * @param PCoeff  Proportional Gain Coefficient
      * @return
      */
-    public double getSteer(double error, double PCoeff) {
+    private double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
