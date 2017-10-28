@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
@@ -67,8 +68,11 @@ public class TeleOp extends OpMode {
 //    double LPushStart = 0.1;
 //    double LPushEnd = 0.9;
 //    double LPushPower = 1.1;
-    long LiftMaxHeight =  3360 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
-    long LiftCurrentPosition= 0;
+    long LiftMaxHeight =  3600 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftCurrentPosition = 0;
+    double liftSpeed = 0.4;
+    int liftStoneHeight = 691;
+    boolean liftLocked = false;
 
     private double LservoUpTime = 0;
     private double RservoUpTime = 0;
@@ -81,6 +85,7 @@ public class TeleOp extends OpMode {
     @Override
     public void init() {
         robot.robot_init(hardwareMap);
+        robot.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetry.addData("Status", "Initialized");
 //        LPush = hardwareMap.servo.get("left_push");
 //        LPush.setPosition(LPushStart);
@@ -109,17 +114,11 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        double rightStickVal = -gamepad1.right_stick_y;
-        double leftStickVal = -gamepad1.left_stick_y;
-        double rightSquaredVal = rightStickVal * rightStickVal;
-        double leftSquaredVal = leftStickVal * leftStickVal;
+        double rightStickVal = gamepad1.right_stick_y;
+        double leftStickVal = gamepad1.left_stick_y;
 
 
-
-
-        if (rightStickVal < 0) rightSquaredVal = -rightSquaredVal;
-        if (leftStickVal < 0) leftSquaredVal = -leftSquaredVal;
-        robot.normalDrive(this, leftSquaredVal, rightSquaredVal);
+        robot.normalDrive(this, leftStickVal, rightStickVal);
 
         double rightManipVal = gamepad2.right_stick_y;
         double leftManipVal = gamepad2.left_stick_y;
@@ -170,45 +169,53 @@ public class TeleOp extends OpMode {
         */
         LiftCurrentPosition = robot.lift.getCurrentPosition();
         if (gamepad2.dpad_up) {
-            if((LiftCurrentPosition < LiftMaxHeight - 100) || LiftMaxHeight == -1) {
-                robot.lift.setPower(-0.25);
+            if (liftLocked) {
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftLocked = false;
             }
-            else{
+            if ((LiftCurrentPosition < LiftMaxHeight - 50) || LiftMaxHeight == -1) {
+                robot.lift.setPower(liftSpeed);
+            } else {
                 robot.lift.setPower(0);
             }
-        } else if(gamepad2.dpad_down) {
-           if(LiftCurrentPosition > 0){
-               robot.lift.setPower(0.25);
-           }
-            else {
-               robot.lift.setPower(0);
-           }
+        } else if (gamepad2.dpad_down) {
+            if (liftLocked) {
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftLocked = false;
+            }
+            if ( LiftCurrentPosition > 0 || LiftMaxHeight == -1 ) {
+                robot.lift.setPower(-liftSpeed);
+            } else {
+                robot.lift.setPower(0);
+            }
         } else {
-            robot.lift.setPower(0);
+            if (liftLocked == false){
+                robot.lift.setPower(0);
+            }
+
+        }
+        if (gamepad2.a && liftLocked == false){
+            robot.lift.setTargetPosition(liftStoneHeight);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lift.setPower(liftSpeed);
+            liftLocked = true;
         }
         telemetry.addData("lift position", LiftCurrentPosition);
-
-
+        telemetry.addData("lift power", robot.lift.getPower());
 
         //if(gamepad2.dpad_up) {
         //    robot.leftLift.setPower(-0.25);
-          //  robot.rightLift.setPower(-0.25);
+        //  robot.rightLift.setPower(-0.25);
         //} else if(gamepad2.dpad_down) {
-          //  robot.leftLift.setPower(0.25);
-            //robot.rightLift.setPower(0.25);
+        //  robot.leftLift.setPower(0.25);
+        //robot.rightLift.setPower(0.25);
         //} else {
-          //  robot.leftLift.setPower(0);
-            //robot.rightLift.setPower(0);
+        //  robot.leftLift.setPower(0);
+        //robot.rightLift.setPower(0);
         //}
 
 
-
-
-        telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftSquaredVal, rightSquaredVal);
-
-        telemetry.addData("Path0", "Position at %7d :%7d",
-                robot.leftBackDrive.getCurrentPosition(),
-                robot.rightBackDrive.getCurrentPosition());
+        telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftStickVal, rightStickVal);
 
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
 
@@ -242,16 +249,16 @@ public class TeleOp extends OpMode {
         telemetry.addData("Servo", "2 rightPush Servo Set to " + robot.rightPush.getPosition());
 */
 
-        telemetry.addData("Status", "Debug 4 at: " + runtime.toString());
+            telemetry.addData("Status", "Debug 4 at: " + runtime.toString());
 
-    }  // loop
-
+        }
+    } // loop
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
-    //@Override
-    //public void stop() {
+    @Override
+    public void stop() {
         robot.normalDrive(this, 0, 0);
     }
 }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -113,7 +114,7 @@ public class HardwareHelper {
      * has and robot_init() will take care of it).
      *
      * This method goes and instantiates every element in the hardware map that is appropriate
-     * for the type of robot we are and then sets the initial configuration options for them.
+     * for the type of robot we areinit and then sets the initial configuration options for them.
      *
      * @param hwMap    The hardware map entry from the OpMode.
      */
@@ -149,8 +150,14 @@ public class HardwareHelper {
 
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
             rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            if (robotType == FULLTELEOP) {
+                leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 lift = hwMap.dcMotor.get(cfgLift);
+                lift.setDirection(DcMotor.Direction.REVERSE);
                 waitForReset(lift, 2000);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                if (robotType == FULLTELEOP) {
@@ -196,7 +203,7 @@ public class HardwareHelper {
         if ( robotType != TROLLBOT_SERVOTEST ) {
             leftBackDrive.setPower(0);
             rightBackDrive.setPower(0);
-            if ( robotType == FULLTELEOP || robotType == FULLAUTO || robotType == TROLLBOT ) {
+            if ( robotType == FULLAUTO || robotType == TROLLBOT ) {
                 leftMidDrive.setPower(0);
                 rightMidDrive.setPower(0);
 
