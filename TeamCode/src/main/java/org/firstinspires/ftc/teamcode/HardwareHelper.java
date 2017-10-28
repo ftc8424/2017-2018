@@ -539,24 +539,24 @@ public class HardwareHelper {
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int)(distance * encoderInch);
-            newLeftTarget = leftDrive.getCurrentPosition() + moveCounts;
-            newRightTarget = rightDrive.getCurrentPosition() + moveCounts;
+            newLeftTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+            newRightTarget = rightBackDrive.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
-            leftDrive.setTargetPosition(newLeftTarget);
-            rightDrive.setTargetPosition(newRightTarget);
+            leftBackDrive.setTargetPosition(newLeftTarget);
+            rightBackDrive.setTargetPosition(newRightTarget);
 
-            leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            leftDrive.setPower(speed);
-            rightDrive.setPower(speed);
+            leftBackDrive.setPower(speed);
+            rightBackDrive.setPower(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
             while (caller.opModeIsActive() &&
-                    (leftDrive.isBusy() && rightDrive.isBusy())) {
+                    (leftBackDrive.isBusy() && rightBackDrive.isBusy())) {
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -577,25 +577,25 @@ public class HardwareHelper {
                     rightSpeed /= max;
                 }
 
-                leftDrive.setPower(leftSpeed);
-                rightDrive.setPower(rightSpeed);
+                leftBackDrive.setPower(leftSpeed);
+                rightBackDrive.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d",      leftDrive.getCurrentPosition(),
-                        robot.rightDrive.getCurrentPosition());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
+                caller.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                caller.telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
+                caller.telemetry.addData("Actual",  "%7d:%7d",      leftBackDrive.getCurrentPosition(),
+                        rightBackDrive.getCurrentPosition());
+                caller.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                caller.telemetry.update();
             }
 
             // Stop all motion;
-            leftDrive.setPower(0);
-            rightDrive.setPower(0);
+            leftBackDrive.setPower(0);
+            rightBackDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -610,12 +610,12 @@ public class HardwareHelper {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
      */
-    public void gyroTurn (  double speed, double angle) {
+    public void gyroTurn (  LinearOpMode caller, double speed, double angle) {
 
         // keep looping while we are still active, and not on heading.
-        while (caller.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+        while (caller.opModeIsActive() && !onHeading (caller, speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
+            caller.telemetry.update();
         }
     }
 
@@ -629,21 +629,21 @@ public class HardwareHelper {
      *                   If a relative angle is required, add/subtract from current heading.
      * @param holdTime   Length of time (in seconds) to hold the specified heading.
      */
-    public void gyroHold( double speed, double angle, double holdTime) {
+    public void gyroHold( LinearOpMode caller, double speed, double angle, double holdTime) {
 
         ElapsedTime holdTimer = new ElapsedTime();
 
         // keep looping while we have time remaining.
         holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+        while (caller.opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
+            onHeading(caller,speed, angle, P_TURN_COEFF);
+            caller.telemetry.update();
         }
 
         // Stop all motion;
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
 
     /**
@@ -656,7 +656,7 @@ public class HardwareHelper {
      * @param PCoeff    Proportional Gain coefficient
      * @return
      */
-    boolean onHeading(double speed, double angle, double PCoeff) {
+    boolean onHeading(LinearOpMode caller, double speed, double angle, double PCoeff) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -679,13 +679,13 @@ public class HardwareHelper {
         }
 
         // Send desired speeds to motors.
-        leftDrive.setPower(leftSpeed);
-        rightDrive.setPower(rightSpeed);
+        leftBackDrive.setPower(leftSpeed);
+        rightBackDrive.setPower(rightSpeed);
 
         // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+        caller.telemetry.addData("Target", "%5.2f", angle);
+        caller.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        caller.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
         return onTarget;
     }

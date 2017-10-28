@@ -84,15 +84,11 @@ public class Auto_Blue_Front extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
 
-        if ( robot.gyroTurn(this, 90, 5) == false) {
-            telemetry.addData("Gyro", "turn unsuccessful");
-            telemetry.update();
-
-        }
+        robot.gyroTurn(this, robot.TURN_SPEED, 90);
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 34, 34, 10);
+        robot.gyroDrive(this, robot.DRIVE_SPEED, 34, 90);
         if ( !opModeIsActive() ) return;
-        robot.gyroTurn(this, 180, 5);
+        robot.gyroTurn(this, robot.TURN_SPEED, 180);
 
 
         // TODO Complete Blue Auto with deliver glyph
