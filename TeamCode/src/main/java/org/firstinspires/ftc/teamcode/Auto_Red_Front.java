@@ -64,17 +64,17 @@ public class Auto_Red_Front extends LinearOpMode {
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.update();
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
-            robot.deploy(robot.colorArm);
-            sleep(100);
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
-        } else if ( blueValue < redValue ) {
-            telemetry.addData("Color", "red");
-            telemetry.update();
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             robot.deploy(robot.colorArm);
             sleep(100);
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+        } else if ( blueValue < redValue ) {
+            telemetry.addData("Color", "red");
+            telemetry.update();
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            robot.deploy(robot.colorArm);
+            sleep(100);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();

@@ -114,8 +114,8 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        double rightStickVal = gamepad1.right_stick_y;
-        double leftStickVal = gamepad1.left_stick_y;
+        double rightStickVal = -gamepad1.right_stick_y;
+        double leftStickVal = -gamepad1.left_stick_y;
 
 
         robot.normalDrive(this, leftStickVal, rightStickVal);

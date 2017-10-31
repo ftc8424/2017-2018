@@ -149,8 +149,8 @@ public class HardwareHelper {
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
 
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
-            rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             if (robotType == FULLTELEOP) {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -167,7 +167,8 @@ public class HardwareHelper {
                } else {
                    leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                    rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
-                   rightMidDrive.setDirection(DcMotor.Direction.REVERSE);
+                   rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
+                   leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
 
                }
 

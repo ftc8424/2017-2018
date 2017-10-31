@@ -40,9 +40,12 @@ public class Auto_Blue_Front extends LinearOpMode {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
-        telemetry.addData("Init:", "Calibrated!!");
-        telemetry.update();
-        waitForStart();
+        while (!isStarted()) {
+            telemetry.addData(">", "Robot Heading = %d", robot.gyro.getIntegratedZValue());
+            telemetry.update();
+        }
+
+        robot.gyro.resetZAxisIntegrator();
 
         robot.deploy(robot.colorArm);
 
@@ -63,17 +66,17 @@ public class Auto_Blue_Front extends LinearOpMode {
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.update();
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
-            robot.deploy(robot.colorArm);
-            sleep(100);
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
-        } else if ( blueValue < redValue ) {
-            telemetry.addData("Color", "red");
-            telemetry.update();
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
             robot.deploy(robot.colorArm);
             sleep(100);
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+        } else if ( blueValue < redValue ) {
+            telemetry.addData("Color", "red");
+            telemetry.update();
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            robot.deploy(robot.colorArm);
+            sleep(100);
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
