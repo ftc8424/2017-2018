@@ -50,8 +50,6 @@ public class HardwareHelper {
     public static final double cArmStart = 0;
     public static final double cArmDeploy = 0.525;
 
-
-
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
@@ -87,8 +85,6 @@ public class HardwareHelper {
     private HardwareMap hwMap = null;
     private ElapsedTime runtime = new ElapsedTime();
 
-
-
     /**
      * Constructor for HardwareHelper, pass in the enumerated type RobotType based on the type of
      * OpMode we are running (e.g., a Trollbot; TeleOp for the full robot with all sensors, servos,
@@ -102,19 +98,18 @@ public class HardwareHelper {
      */
     public HardwareHelper(RobotType type) {
         robotType = type;
-
     }
 
     /**
      * This is the initialization routine for every OpMode in the system.  It uses the RobotType
-     * as passed in the contrustor to determine which elements of the physical robot to go
+     * as passed in the constructor to determine which elements of the physical robot to go
      * and get from the hardware map.  It also expects to be sent the hardware map that is used
      * by the specific OpMode (not sure if there is only a single HardwareMap per the FTC
      * Robot Controller, or if each OpMode has its own, so just pass in whatever your OpMode
      * has and robot_init() will take care of it).
      *
      * This method goes and instantiates every element in the hardware map that is appropriate
-     * for the type of robot we areinit and then sets the initial configuration options for them.
+     * for the type of robot we are and then sets the initial configuration options for them.
      *
      * @param hwMap    The hardware map entry from the OpMode.
      */
@@ -127,7 +122,10 @@ public class HardwareHelper {
 
     /**
      * This is the method used for 180 degree servos.  It gets their current position and sets
-     * it to their other position.
+     * it to their other position.  It will just be a bunch of if..elseif..else statements
+     * for each 180-degree servo to determine the target position.  If we can't find the
+     * type of servo we are, then just return back to the caller.
+     *
      * @param servo
      */
     public void deploy(Servo servo) {

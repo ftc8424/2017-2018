@@ -64,21 +64,12 @@ public class TeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
-//    private Servo LPush;
-//    double LPushStart = 0.1;
-//    double LPushEnd = 0.9;
-//    double LPushPower = 1.1;
     long LiftMaxHeight =  3600 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
     double liftSpeed = 0.4;
     int liftStoneHeight = 691;
     boolean liftLocked = false;
 
-    private double LservoUpTime = 0;
-    private double RservoUpTime = 0;
-    private double powerSetTime = 0;
-    private boolean manipMoving = false;
-    private double lastManipTime = 0;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -87,10 +78,6 @@ public class TeleOp extends OpMode {
         robot.robot_init(hardwareMap);
         robot.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetry.addData("Status", "Initialized");
-//        LPush = hardwareMap.servo.get("left_push");
-//        LPush.setPosition(LPushStart);
-//        wait(2000);
-//        LPush.setPosition(LPushEnd);
     }
 
     /*
@@ -124,49 +111,19 @@ public class TeleOp extends OpMode {
         double leftManipVal = gamepad2.left_stick_y;
         robot.leftManip.setPower(leftManipVal);
         robot.rightManip.setPower(rightManipVal);
-        int speed = 0;
-        int manipMove;
-        /*if (gamepad2.y && lastManipTime + 1 < runtime.seconds()) {
-            if (manipMoving){
-                robot.leftManip.setPosition(0.5);
-                robot.rightManip.setPosition(0.5);
-                manipMoving = false;
-            } else{
-                robot.leftManip.setPosition(1);
-                robot.rightManip.setPosition(0);
-                manipMoving = true;
-            }
-            lastManipTime = runtime.seconds();
-        }
-
-        if (gamepad2.x && lastManipTime + 1 < runtime.seconds()) {
-            if (manipMoving) {
-                robot.leftManip.setPosition(0.5);
-                robot.rightManip.setPosition(0.5);
-                manipMoving = false;
-            } else {
-                robot.leftManip.setPosition(0);
-                robot.rightManip.setPosition(1);
-                manipMoving = true;
-            }
-            lastManipTime = runtime.seconds();
-
-        }*/
-
 
         /*THIS IS WHAT NEEDS TO BE CODED AS PER COACH JERRY:
-            When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
-            as the gamepad2.dpad is held down. When it is not held down, it stops moving. The code
-            needs to have a restriction, so that the rope doesn't cause the motor to burn out. Also,
-            when the gamepad2.dpad_up is called, the code should be able to recall how many rotations
-            were made when going up, and should retrace those rotations downward to get the manipulator
-            to its starting position, that way no motors get burnt out, and there can be a single starting
-            point for the simplicty of the code, and the driver controlling that part of the robot.
-            */
-        /*
-        long LiftMaxHeight = -1;
-        long LiftCurrentPosition= 0;
-        */
+         *
+         * When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
+         * as the gamepad2.dpad is held down. When it is not held down, it stops moving. The code
+         * needs to have a restriction, so that the rope doesn't cause the motor to burn out. Also,
+         * when the gamepad2.dpad_up is called, the code should be able to recall how many rotations
+         * were made when going up, and should retrace those rotations downward to get the
+         * manipulator to its starting position, that way no motors get burnt out, and there can
+         * be a single starting point for the simplicity of the code, and the driver controlling
+         * that part of the robot.
+         */
+
         LiftCurrentPosition = robot.lift.getCurrentPosition();
         if (gamepad2.dpad_up) {
             if (liftLocked) {
@@ -202,56 +159,9 @@ public class TeleOp extends OpMode {
         }
         telemetry.addData("lift position", LiftCurrentPosition);
         telemetry.addData("lift power", robot.lift.getPower());
-
-        //if(gamepad2.dpad_up) {
-        //    robot.leftLift.setPower(-0.25);
-        //  robot.rightLift.setPower(-0.25);
-        //} else if(gamepad2.dpad_down) {
-        //  robot.leftLift.setPower(0.25);
-        //robot.rightLift.setPower(0.25);
-        //} else {
-        //  robot.leftLift.setPower(0);
-        //robot.rightLift.setPower(0);
-        //}
-
-
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftStickVal, rightStickVal);
-
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
 
-        {
-
-/*    Not needed on current Trollbot, has no servos.
-
-        if (gamepad1.left_bumper && LservoUpTime + 2 < runtime.seconds()) {
-            //robot.lpushStart robot.lpushDeploy
-            if (robot.leftPush.getPosition() == robot.lpushStart) {
-                robot.leftPush.setPosition(robot.lpushDeploy);
-
-            } else {
-                robot.leftPush.setPosition(robot.lpushStart);
-            }
-            LservoUpTime = runtime.seconds();
-        }
-        telemetry.addData("Status", "Debug 2 at: " + runtime.toString());
-        telemetry.addData("Servo", " 1 leftPush Servo Set to " + robot.leftPush.getPosition());
-
-        if (gamepad1.right_bumper && RservoUpTime + 2 < runtime.seconds()) {
-            telemetry.addData("Status", "Debug 3 at: " + runtime.toString());
-            // robot.rpushStart robot.rpushDeploy
-            if (robot.rightPush.getPosition() == robot.rpushStart) {
-                robot.rightPush.setPosition(robot.rpushDeploy);
-            } else {
-                robot.rightPush.setPosition(robot.rpushStart);
-            }
-            RservoUpTime = runtime.seconds();
-        }
-        telemetry.addData("Servo", "2 rightPush Servo Set to " + robot.rightPush.getPosition());
-*/
-
-            telemetry.addData("Status", "Debug 4 at: " + runtime.toString());
-
-        }
     } // loop
 
     /*
