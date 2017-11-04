@@ -15,7 +15,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
  */
 @Autonomous(name = "Auto Red Front", group = "RedSide")
 public class Auto_Red_Front extends LinearOpMode {
-    HardwareHelper robot = new HardwareHelper(COLORTEST);
+    HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -30,7 +30,8 @@ public class Auto_Red_Front extends LinearOpMode {
         // bPrevState and bCurrState represent the previous and current state of the button.
         boolean bPrevState = false;
         boolean bCurrState = false;
-        double driveSpeed = .5;
+        double driveSpeed = robot.DRIVE_SPEED;
+        int heading = 0;
         robot.color.enableLed(true);
         sleep(1000L);
         robot.color.enableLed(false);
@@ -41,10 +42,13 @@ public class Auto_Red_Front extends LinearOpMode {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
-        telemetry.addData("Init:", "Calibrated!!");
-        telemetry.update();
-        waitForStart();
-        //robot.color.enableLed(true);
+        while ( !isStarted() ) {
+            robot.gyro.resetZAxisIntegrator();
+            heading = robot.gyro.getHeading();
+            telemetry.addData("Init:", "Calibrated!!");
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        }
         robot.deploy(robot.colorArm);
 
         sleep(1500);
@@ -63,34 +67,82 @@ public class Auto_Red_Front extends LinearOpMode {
         robot.color.enableLed(false);
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
+            telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             robot.deploy(robot.colorArm);
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
             sleep(100);
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
         } else if ( blueValue < redValue ) {
+            telemetry.addData("Gyro:", heading);
             telemetry.addData("Color", "red");
             telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(100);
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(100);
         }
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
 
         if ( !opModeIsActive() ) return;
+        robot.encoderDrive(this, driveSpeed, 23, 23, 5);
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
+        robot.gyro.resetZAxisIntegrator();
+        sleep(1000);
+        heading = robot.gyro.getHeading();
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
 
-        robot.gyroTurn(this, robot.TURN_SPEED, -90);
+        if (robot.gyroTurn(this, 115, 10) == false) {
+            heading = robot.gyro.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.addData("Gyro", "turn unsuccessful");
+            telemetry.update();
+            this.stop();
+        }
+        heading = robot.gyro.getHeading();
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
+
         if ( !opModeIsActive() ) return;
-        robot.gyroDrive (this, robot.DRIVE_SPEED, 34,-90);
+        robot.encoderDrive(this, driveSpeed, 35, 35, 10);
+        heading = robot.gyro.getHeading();
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
         if ( !opModeIsActive() ) return;
-        robot.gyroTurn(this, robot.TURN_SPEED, 180);
+        robot.gyroTurn(this, 170, 10);
+        heading = robot.gyro.getHeading();
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
 
-        // TODO Complete Red Auto with deliver glyph
+        if ( !opModeIsActive() ) return;
+        robot.encoderDrive(this, driveSpeed, 18, 18, 10);
+        heading = robot.gyro.getHeading();
+        telemetry.addData("Gyro:", heading);
+        telemetry.update();
 
+        double manipTimer = runtime.milliseconds();
+        do {
+            robot.leftManip.setPower(0.75);
+            robot.rightManip.setPower(0.75);
+        } while ( opModeIsActive() && runtime.milliseconds() < manipTimer+2000 );
+        robot.encoderDrive(this, robot.DRIVE_SPEED, -4, -4, 10);
+        robot.leftManip.setPower(0);
+        robot.rightManip.setPower(0);
     }
 }

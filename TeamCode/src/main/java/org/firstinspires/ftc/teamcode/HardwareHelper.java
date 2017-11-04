@@ -48,7 +48,7 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.525;
+    public static final double cArmDeploy = 0.625;
 
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
@@ -74,7 +74,7 @@ public class HardwareHelper {
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
+    static final double     TURN_SPEED              = 0.25;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -158,18 +158,16 @@ public class HardwareHelper {
                 lift.setDirection(DcMotor.Direction.REVERSE);
                 waitForReset(lift, 2000);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-               if (robotType == FULLTELEOP) {
+               if (robotType == FULLTELEOP || robotType == FULLAUTO ) {
                    leftManip = hwMap.dcMotor.get(cfgleftManip);
                    rightManip = hwMap.dcMotor.get(cfgrightManip);
                    rightManip.setDirection(DcMotor.Direction.REVERSE);
-               } else {
+               } else if (robotType != FULLAUTO){
                    leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                    rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
                    rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
                    leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
-
                }
-
             }
 
             /*
@@ -185,15 +183,15 @@ public class HardwareHelper {
             boolean resetOk = false;
             if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
-                if ( robotType == FULLAUTO )
-                    resetOk = resetOk && waitForReset(leftMidDrive, rightMidDrive, 2000);
+               // if ( robotType == FULLAUTO )
+                 //   resetOk = resetOk && waitForReset(leftMidDrive, rightMidDrive, 2000);
                 if (resetOk) {
                     leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if ( robotType == FULLAUTO ) {
-                        leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    }
+                  //  if ( robotType == FULLAUTO ) {
+                   //     leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                     //   rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                 //   }
                 }
             }
         }
@@ -202,7 +200,7 @@ public class HardwareHelper {
         if ( robotType != TROLLBOT_SERVOTEST ) {
             leftBackDrive.setPower(0);
             rightBackDrive.setPower(0);
-            if ( robotType == FULLAUTO || robotType == TROLLBOT ) {
+            if ( robotType == TROLLBOT ) {
                 leftMidDrive.setPower(0);
                 rightMidDrive.setPower(0);
 
@@ -218,7 +216,7 @@ public class HardwareHelper {
             servotest = hwMap.servo.get(cfgServoTest);
         }
 
-        if ( robotType == COLORTEST || robotType == FULLTELEOP ) {
+        if ( robotType == COLORTEST || robotType == FULLTELEOP || robotType == FULLAUTO ) {
             colorArm = hwMap.servo.get(cfgcolorArm);
             colorArm.setPosition(cArmStart);
         }
@@ -244,6 +242,127 @@ public class HardwareHelper {
         }
 
     }
+
+    /**
+     * TODO THIS ROUTINE NEEDS TO BE REPLACED - REVERTED due to other errors
+     *
+     * The code shuld come from the PushbotAutoDriveByGyro.java file as well as the helper
+     * methods such as onHeading, gyroHold, etc., but it needs to take into account the robotType
+     * so that it only sends power to the appropriate motors.
+     *
+     * @param caller
+     * @param heading
+     * @param timeoutS
+     * @return
+     * @throws InterruptedException
+     */
+    public boolean gyroTurn(LinearOpMode caller,
+                            int heading,
+                            double timeoutS) throws InterruptedException {
+        int zValue;
+        int gHeading;
+        int heading360;
+        int absHeading;
+        int deltaHeading;
+        double rightPower;
+        double leftPower;
+        double turnspeed = TURN_SPEED;
+        double stopTime = runtime.seconds() + timeoutS;
+
+        do {
+            gHeading = gyro.getHeading();
+            //zValue = gyro.getIntegratedZValue();
+            //heading360 = zValue % 360;
+//            if ( heading360 > 0 )
+//                absHeading = heading360;
+//            else
+//                absHeading = heading360 + 360;
+            //deltaHeading = absHeading - heading;
+            //caller.telemetry.addData("gyroTurn:", "delta: %d absHeading: %d, currently at %d going to %d", deltaHeading, absHeading, zValue, heading);
+            caller.telemetry.addData("gyroTurn:", "gHeading: %d, going to %d", gHeading, heading);
+            caller.telemetry.update();
+            //caller.sleep(1000);
+//            if (Math.abs(deltaHeading) <= 180 && heading360 > 180) {
+//                leftPower = -turnspeed;
+//                rightPower = turnspeed;
+//            } else {
+//                leftPower = turnspeed;
+//                rightPower = -turnspeed;
+//            }
+            /*
+             * Turn left if the difference from where we're heading to where we want to head
+             * is smaller than -180 or is between 1 and 180.  All else (including the 0 and 180
+             * situations) turn right.
+             */
+            deltaHeading = gHeading - heading;
+            if ( deltaHeading < -180 || (deltaHeading > 0 && deltaHeading < 180) ) {
+                leftPower = -turnspeed;
+                rightPower = turnspeed;
+            } else {
+                leftPower = turnspeed;
+                rightPower = -turnspeed;
+            }
+            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+                leftMidDrive.setPower(leftPower);
+                rightMidDrive.setPower(rightPower);
+            }
+            leftBackDrive.setPower(leftPower);
+            rightBackDrive.setPower(rightPower);
+            gHeading = gyro.getHeading();
+        }
+//        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
+        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
+        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+            leftMidDrive.setPower(0.0);
+            rightMidDrive.setPower(0.0);
+        }
+        leftBackDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
+//        if ( deltaHeading <= 1 )
+        if ( Math.abs(gHeading - heading) <= 1 )
+            return true;
+        else
+            return false;
+//        if(heading360  < 0){
+//              absHeading = heading360 + 360;
+//        } else {
+//             absHeading = heading360;
+//        }
+
+//        int deltaHeading = absHeading - heading;
+//
+//        if (deltaHeading <=180){
+//            do {
+//                leftMidDrive.setPower(-turnspeed);
+//                rightMidDrive.setPower(turnspeed);
+//                leftBackDrive.setPower(-turnspeed);
+//                rightBackDrive.setPower(turnspeed);
+//                zValue = gyro.getIntegratedZValue();
+//                caller.telemetry.addData("gyroTurn:", "Turning to %d, currently at %d", absHeading, zValue);
+//                caller.telemetry.update();
+//            }
+//            while (caller.opModeIsActive() && Math.abs(zValue - absHeading) > 1 && runtime.seconds() < stopTime);
+//        } else {
+//            do {
+//                leftMidDrive.setPower(turnspeed);
+//                rightMidDrive.setPower(-turnspeed);
+//                leftBackDrive.setPower(turnspeed);
+//                rightBackDrive.setPower(-turnspeed);
+//                zValue = gyro.getIntegratedZValue();
+//                caller.telemetry.addData("gyroTurn:", "Turning to %d, currently at %d", absHeading, zValue);
+//                caller.telemetry.update();
+//            }
+//            while (caller.opModeIsActive() && Math.abs(zValue - absHeading) > 1 && runtime.seconds() < stopTime);
+//        }
+//        leftMidDrive.setPower(0.0);
+//        rightMidDrive.setPower(0.0);
+//        leftBackDrive.setPower(0.0);
+//        rightBackDrive.setPower(0.0);
+//        return Math.abs(gyro.getIntegratedZValue() - absHeading) <= 1;
+        }
+/*This code we wrote establishes different things 1.  It makes sure that during gyro that if certain
+statements are true than the code will stop working, 2. I don't know what else.
+ */
 
     /**
      * Drive by the encoders, running to a position relative to the current position based
@@ -279,23 +398,23 @@ public class HardwareHelper {
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if ( robotType == FULLAUTO ) {
-            leftMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+       // if ( robotType == FULLAUTO ) {
+           // leftMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           // rightMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //}
 
 
 
         /*
          * Determine new target position and pass to motor controller
          */
-        if ( robotType == FULLAUTO ) {
-            newLeftMidTarget = leftMidDrive.getCurrentPosition() + (int) Math.round(leftInches * encoderInch);
-            newRightMidTarget = rightMidDrive.getCurrentPosition() + (int) Math.round(rightInches * encoderInch);
-        } else {
+       // if ( robotType == FULLAUTO ) {
+         //   newLeftMidTarget = leftMidDrive.getCurrentPosition() + (int) Math.round(leftInches * encoderInch);
+           // newRightMidTarget = rightMidDrive.getCurrentPosition() + (int) Math.round(rightInches * encoderInch);
+        //} else {
             newLeftMidTarget = 0;
             newRightMidTarget = 0;
-        }
+       // }
         newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)Math.round(leftInches * encoderInch);
         newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)Math.round(rightInches * encoderInch);
 //        caller.telemetry.addLine("encoderDrive-MID:")
@@ -313,13 +432,13 @@ public class HardwareHelper {
 
         lbEncoderSet = setEncoderPosition(caller, leftBackDrive, newLeftBackTarget, encoderTimeout);
         rbEncoderSet = setEncoderPosition(caller, rightBackDrive, newRightBackTarget, encoderTimeout);
-        if ( robotType == FULLAUTO ) {
-            lmEncoderSet = setEncoderPosition(caller, leftMidDrive, newLeftMidTarget, encoderTimeout);
-            rmEncoderSet = setEncoderPosition(caller, rightMidDrive, newRightMidTarget, encoderTimeout);
-        } else {
+      //  if ( robotType == FULLAUTO ) {
+        //    lmEncoderSet = setEncoderPosition(caller, leftMidDrive, newLeftMidTarget, encoderTimeout);
+       //     rmEncoderSet = setEncoderPosition(caller, rightMidDrive, newRightMidTarget, encoderTimeout);
+        //} else {
             lmEncoderSet = true;
             rmEncoderSet = true;
-        }
+      //  }
 //        caller.telemetry.addLine("EncoderSet:")
 //                .addData("LB: ", lbEncoderSet)
 //                .addData("RB: ", rbEncoderSet)
@@ -365,43 +484,43 @@ public class HardwareHelper {
             leftBackDrive.setPower(leftPower);
             rightBackDrive.setPower(rightPower);
 
-            if(robotType == FULLAUTO){
-                leftMidDrive.setPower(leftPower);
-                rightMidDrive.setPower(rightPower);
-            }
+         //   if(robotType == FULLAUTO){
+           //     leftMidDrive.setPower(leftPower);
+             //   rightMidDrive.setPower(rightPower);
+            //}
             caller.telemetry.addData("Power:", "Left Power %.2f, Right Power %.2f", leftPower, rightPower);
             caller.telemetry.update();
             lbCurPos = leftBackDrive.getCurrentPosition();
             rbCurPos = rightBackDrive.getCurrentPosition();
-            if ( robotType == FULLAUTO ) {
-                lmCurPos = leftMidDrive.getCurrentPosition();
-                rmCurPos = rightMidDrive.getCurrentPosition();
-            } else {
+         //   if ( robotType == FULLAUTO ) {
+          //      lmCurPos = leftMidDrive.getCurrentPosition();
+          //      rmCurPos = rightMidDrive.getCurrentPosition();
+          //  } else {
                 lmCurPos = Integer.MAX_VALUE;
                 rmCurPos = Integer.MAX_VALUE;
-            }
+          //  }
             isBusy = (Math.abs(lbCurPos - newLeftBackTarget) >= 5) && (Math.abs(rbCurPos - newRightBackTarget) >= 5);
-            if ( robotType == FULLAUTO )
-                isBusy = isBusy && (Math.abs(lmCurPos - newLeftMidTarget) >= 5) && (Math.abs(rmCurPos - newRightMidTarget) >= 5);
+       //     if ( robotType == FULLAUTO )
+        //        isBusy = isBusy && (Math.abs(lmCurPos - newLeftMidTarget) >= 5) && (Math.abs(rmCurPos - newRightMidTarget) >= 5);
         }
         while (caller.opModeIsActive() && isBusy && runtime.seconds() < stopTime);
 
         // Stop all motion;
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
-        if ( robotType == FULLAUTO ) {
-            leftMidDrive.setPower(0);
-            rightMidDrive.setPower(0);
-        }
+       // if ( robotType == FULLAUTO ) {
+        //    leftMidDrive.setPower(0);
+        //    rightMidDrive.setPower(0);
+       // }
 
         // Turn off RUN_TO_POSITION
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if ( robotType == FULLAUTO ) {
-            leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+      //  if ( robotType == FULLAUTO ) {
+      //      leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      //      rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      //  }
     }
 
     /**
@@ -628,7 +747,7 @@ public class HardwareHelper {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
      */
-    public void gyroTurn (  LinearOpMode caller, double speed, double angle) {
+    public void gyroTurn2 (  LinearOpMode caller, double speed, double angle) {
 
         // keep looping while we are still active, and not on heading.
         while (caller.opModeIsActive() && !onHeading (caller, speed, angle, P_TURN_COEFF)) {
