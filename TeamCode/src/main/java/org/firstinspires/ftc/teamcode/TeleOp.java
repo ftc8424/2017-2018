@@ -162,6 +162,9 @@ public class TeleOp extends OpMode {
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftStickVal, rightStickVal);
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
 
+        if (gamepad2.x || gamepad1.x) {
+            robot.colorArm.setPosition(robot.cArmStart);
+        }
     } // loop
 
     /*
