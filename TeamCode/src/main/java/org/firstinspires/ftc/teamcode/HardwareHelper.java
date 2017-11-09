@@ -48,7 +48,7 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.56;
+    public static final double cArmDeploy = 0.59;
 
     //Position change down below wuld enable the color sensor to move up and down 4.5 degrees
     static final double poscha = 0.025;
