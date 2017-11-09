@@ -48,7 +48,20 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.625;
+    public static final double cArmDeploy = 0.56;
+
+    //Position change down below wuld enable the color sensor to move up and down 4.5 degrees
+    static final double poscha = 0.025;
+
+
+
+
+
+
+
+        //Down below will set the current position
+    static final double curpos = 0;
+
 
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
@@ -135,6 +148,22 @@ public class HardwareHelper {
         servo.setPosition(targetPosition);
     }
 
+
+    public void colorArmAdjust(){
+        double curpos = colorArm.getPosition();
+        if(curpos == cArmDeploy)
+        {
+            colorArm.setPosition(cArmDeploy - poscha);
+        }
+        else if (curpos < cArmDeploy)
+        {
+            colorArm.setPosition(cArmDeploy + poscha);
+        }
+        else
+        {
+            colorArm.setPosition(cArmDeploy);
+        }
+    }
     /**
      * This method is used to initialize all motors and set them with directions and other
      * parameters as necessary basd on the robot type.
