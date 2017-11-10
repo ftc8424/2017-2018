@@ -56,6 +56,9 @@ public class Auto_Red_Front extends LinearOpMode {
         robot.color.enableLed(true);
         double turnInch = 2;
         double colorTimer = runtime.milliseconds();
+
+        int times = 0;
+
         do {
             sleep(10);
             blueValue = robot.color.blue();
@@ -63,8 +66,22 @@ public class Auto_Red_Front extends LinearOpMode {
             telemetry.addData("color blue", blueValue);
             telemetry.addData("color red", redValue);
             telemetry.update();
+
+            if ( times > 0)
+            {
+                robot.colorArmAdjust();
+                if( times % 3 == 0)
+                {
+                    robot.encoderDrive(this, 0.25, 0.5, -0.5 ,1);
+
+                }
+            }
+            times++;
         }while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
+
+
+
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);

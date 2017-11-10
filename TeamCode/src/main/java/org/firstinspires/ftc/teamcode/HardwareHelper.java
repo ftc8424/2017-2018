@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.SENSORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_SERVOTEST;
@@ -48,12 +49,25 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.625;
+    public static final double cArmDeploy = 0.61;
+
+    //Position change down below wuld enable the color sensor to move up and down 4.5 degrees
+    static final double poscha = 0.020;
+
+
+
+
+
+
+
+        //Down below will set the current position
+    static final double curpos = 0;
+
 
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
-        TROLLBOT_SERVOTEST
+        TROLLBOT_SERVOTEST, SENSORTEST
     }
 
     /*
@@ -135,6 +149,22 @@ public class HardwareHelper {
         servo.setPosition(targetPosition);
     }
 
+
+    public void colorArmAdjust(){
+        double curpos = colorArm.getPosition();
+        if(curpos == cArmDeploy)
+        {
+            colorArm.setPosition(cArmDeploy - poscha);
+        }
+        else if (curpos < cArmDeploy)
+        {
+            colorArm.setPosition(cArmDeploy + poscha);
+        }
+        else
+        {
+            colorArm.setPosition(cArmDeploy);
+        }
+    }
     /**
      * This method is used to initialize all motors and set them with directions and other
      * parameters as necessary basd on the robot type.
@@ -142,7 +172,7 @@ public class HardwareHelper {
     private void initMotor() {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
-                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ) {
+                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST || robotType == SENSORTEST) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
 
