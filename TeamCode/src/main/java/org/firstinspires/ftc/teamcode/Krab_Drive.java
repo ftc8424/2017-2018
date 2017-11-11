@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,20 +13,26 @@ import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 
+*/
 /**
  * Created by aagrockstar on 11/9/2017.
- */
+ *//*
 
 
+
+*/
 /*
 For this program, we are going to program a crab drive robot. It will be able to move left right, forward, backward, and also
 diagonal, all 4 ways. Then, we are going to program a color sensor program that senses the red and blue value. The Color Sensor
 is a REV sensor.
- */
+ *//*
+
 public class Krab_Drive{
     HardwareHelper KrabDrive = new HardwareHelper(HardwareHelper.RobotType.FULLTELEOP);
 
-    /* Declare OpMode members. */
+    */
+/* Declare OpMode members. *//*
+
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
@@ -53,3 +60,4 @@ public class Krab_Drive{
 
 }
 
+*/
