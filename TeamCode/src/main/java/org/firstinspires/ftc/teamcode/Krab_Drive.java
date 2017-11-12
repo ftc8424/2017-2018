@@ -1,63 +1,110 @@
 /*
+Copyright (c) 2016 Robert Atkinson
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted (subject to the limitations in the disclaimer below) provided that
+the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list
+of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+Neither the name of Robert Atkinson nor the names of his contributors may be used to
+endorse or promote products derived from this software without specific prior
+written permission.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESSFOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
-
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLBOT;
 
-*/
 /**
- * Created by aagrockstar on 11/9/2017.
- *//*
+ * Created by FTC8424 on 9/15/2016.
+ */
 
+/**
+ * This file contains an example of an iterative (Non-Linear) "OpMode".
+ *
+ * It's a crab-drive base trollbot.  It has a color sensor and a servo
+ */
 
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Krab TeleOp", group="Iterative Opmode")
 
-*/
-/*
-For this program, we are going to program a crab drive robot. It will be able to move left right, forward, backward, and also
-diagonal, all 4 ways. Then, we are going to program a color sensor program that senses the red and blue value. The Color Sensor
-is a REV sensor.
- *//*
+public class Krab_Drive extends OpMode {
 
-public class Krab_Drive{
-    HardwareHelper KrabDrive = new HardwareHelper(HardwareHelper.RobotType.FULLTELEOP);
-
-    */
-/* Declare OpMode members. *//*
-
+    /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
+    private HardwareHelper robot = new HardwareHelper(REVTROLLBOT);
 
-    public Gamepad gamepad1 = null;
-    public Telemetry telemetry = new TelemetryImpl (this);
-    public Gamepad gamepad2 = null;   // will be set in OpModeManager.runActiveOpMode
-    public HardwareMap hardwareMap = null;
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
     public void init() {
         robot.robot_init(hardwareMap);
+        robot.rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Status", "Initialized");
     }
 
-     telemetry.addData("Status", "Running: " + runtime.toString());
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+        runtime.reset();
+    }
 
-    double rightStickVal = -gamepad1.right_stick_y;
-    double leftStickVal = -gamepad1.left_stick_y;
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
 
+        telemetry.addData("Status", "Running: " + runtime.toString());
 
+        double rightStickVal = -gamepad1.right_stick_y;
+        double leftStickVal = -gamepad1.left_stick_y;
+        double rightStickXVal = gamepad1.right_stick_x;
+        double leftStickXVal = gamepad1.left_stick_x;
 
-        robot.normalDrive(this, leftStickVal, rightStickVal);
+        if ( Math.abs(rightStickXVal) > 0.2 || Math.abs(leftStickXVal) > 0.2 ) {
+            robot.sideDrive(this, leftStickXVal, rightStickXVal);
+        } else if ( Math.abs(rightStickVal) > 0.01 || Math.abs(leftStickVal) > 0.01 ) {
+            robot.normalDrive(this, leftStickVal, rightStickVal);
+        } else {
+            robot.normalDrive(this, 0.0, 0.0);
+        }
 
-    double rightManipVal = gamepad2.right_stick_y;
-    double leftManipVal = gamepad2.left_stick_y;
+    } // loop
 
+    /*,
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
+        robot.normalDrive(this, 0.0, 0.0);
+    }
 }
-
-*/

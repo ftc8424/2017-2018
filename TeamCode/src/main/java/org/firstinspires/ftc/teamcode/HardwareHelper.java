@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.SENSORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
@@ -35,16 +36,17 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_S
 public class HardwareHelper {
 
     /* Public OpMode members, things they can use */
-    public DcMotor     leftMidDrive = null;   private static final String cfgLMidDrive   = "L Mid";
-    public DcMotor     rightMidDrive = null;  private static final String cfgRMidDrive   = "R Mid";
-    public DcMotor     leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
-    public DcMotor     rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
-    public DcMotor       rightManip = null; private static final String  cfgrightManip = "R Manip";
-    public DcMotor       leftManip = null; private static final String  cfgleftManip = "L Manip";
-    public Servo        colorArm = null; private static final String cfgcolorArm = "C Arm";
-    public DcMotor     lift = null; private static final String  cfgLift = "Lift";
+    public DcMotor leftFrontDrive = null;   private static final String cfgLMidDrive   = "L Front";
+    public DcMotor rightFrontDrive = null;  private static final String cfgRMidDrive   = "R Front";
+    public DcMotor leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
+    public DcMotor rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
+    public DcMotor rightManip = null; private static final String  cfgrightManip = "R Manip";
+    public DcMotor leftManip = null; private static final String  cfgleftManip = "L Manip";
+    public Servo   colorArm = null; private static final String cfgcolorArm = "C Arm";
+    public DcMotor lift = null; private static final String  cfgLift = "Lift";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
+    public ModernRoboticsI2cGyro imu = null; private static final String cfgIMU = "imu";
     public Servo       servotest = null; private static final String cfgServoTest = "servo";
 
     /* Servo positions, adjust as necessary. */
@@ -67,7 +69,7 @@ public class HardwareHelper {
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
-        TROLLBOT_SERVOTEST, SENSORTEST
+        TROLLBOT_SERVOTEST, SENSORTEST, REVTROLLBOT
     }
 
     /*
@@ -172,16 +174,23 @@ public class HardwareHelper {
     private void initMotor() {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
-                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST || robotType == SENSORTEST) {
+                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ||
+                robotType == SENSORTEST || robotType == REVTROLLBOT ) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
 
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
-            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            if ( robotType == REVTROLLBOT ) {
+                leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+                rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            } else {
+                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            }
             rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            if (robotType == FULLTELEOP) {
+
+            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == REVTROLLBOT ) {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
@@ -190,18 +199,19 @@ public class HardwareHelper {
                 lift.setDirection(DcMotor.Direction.REVERSE);
                 waitForReset(lift, 2000);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-               if (robotType == FULLTELEOP || robotType == FULLAUTO ) {
-                   leftManip = hwMap.dcMotor.get(cfgleftManip);
-                   rightManip = hwMap.dcMotor.get(cfgrightManip);
-                   rightManip.setDirection(DcMotor.Direction.REVERSE);
-               } else if (robotType != FULLAUTO){
-                   leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
-                   rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
-                   rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
-                   leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
-                   rightMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                   leftMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-               }
+                if (robotType == FULLTELEOP || robotType == FULLAUTO) {
+                    leftManip = hwMap.dcMotor.get(cfgleftManip);
+                    rightManip = hwMap.dcMotor.get(cfgrightManip);
+                    rightManip.setDirection(DcMotor.Direction.REVERSE);
+                }
+            }
+            if ( robotType == REVTROLLBOT ) {
+                leftFrontDrive = hwMap.dcMotor.get(cfgLMidDrive);
+                rightFrontDrive = hwMap.dcMotor.get(cfgRMidDrive);
+                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
             /*
@@ -218,13 +228,13 @@ public class HardwareHelper {
             if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
                // if ( robotType == FULLAUTO )
-                 //   resetOk = resetOk && waitForReset(leftMidDrive, rightMidDrive, 2000);
+                 //   resetOk = resetOk && waitForReset(leftFrontDrive, rightFrontDrive, 2000);
                 if (resetOk) {
                     leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                   //  if ( robotType == FULLAUTO ) {
-                   //     leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                     //   rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                   //     leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                     //   rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                  //   }
                 }
             }
@@ -234,9 +244,9 @@ public class HardwareHelper {
         if ( robotType != TROLLBOT_SERVOTEST ) {
             leftBackDrive.setPower(0);
             rightBackDrive.setPower(0);
-            if ( robotType == TROLLBOT ) {
-                leftMidDrive.setPower(0);
-                rightMidDrive.setPower(0);
+            if ( robotType == REVTROLLBOT ) {
+                leftFrontDrive.setPower(0);
+                rightFrontDrive.setPower(0);
 
             }
         }
@@ -246,7 +256,7 @@ public class HardwareHelper {
      * This method is used to initialize servos and set their positions.
      */
     private void initServo() {
-        if ( robotType == TROLLBOT_SERVOTEST ) {
+        if ( robotType == TROLLBOT_SERVOTEST || robotType == REVTROLLBOT ) {
             servotest = hwMap.servo.get(cfgServoTest);
         }
 
@@ -262,17 +272,16 @@ public class HardwareHelper {
     private void initSensor() {
 
         /* Set the sensors based on type */
-        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO || robotType == FULLTELEOP ) {
+        if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ||
+                robotType == FULLTELEOP || robotType == REVTROLLBOT ) {
             color = hwMap.colorSensor.get(cfgrpColorSensor);
         }
 
         /* Set the sensors based on type */
 
-
         /* Get the Gyro */
         if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
-
         }
 
     }
@@ -336,9 +345,9 @@ public class HardwareHelper {
                 leftPower = turnspeed;
                 rightPower = -turnspeed;
             }
-            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
-                leftMidDrive.setPower(leftPower);
-                rightMidDrive.setPower(rightPower);
+            if ( robotType == REVTROLLBOT ) {
+                leftFrontDrive.setPower(leftPower);
+                rightFrontDrive.setPower(rightPower);
             }
             leftBackDrive.setPower(leftPower);
             rightBackDrive.setPower(rightPower);
@@ -346,9 +355,9 @@ public class HardwareHelper {
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
-        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
-            leftMidDrive.setPower(0.0);
-            rightMidDrive.setPower(0.0);
+        if ( robotType == REVTROLLBOT ) {
+            leftFrontDrive.setPower(0.0);
+            rightFrontDrive.setPower(0.0);
         }
         leftBackDrive.setPower(0.0);
         rightBackDrive.setPower(0.0);
@@ -367,8 +376,8 @@ public class HardwareHelper {
 //
 //        if (deltaHeading <=180){
 //            do {
-//                leftMidDrive.setPower(-turnspeed);
-//                rightMidDrive.setPower(turnspeed);
+//                leftFrontDrive.setPower(-turnspeed);
+//                rightFrontDrive.setPower(turnspeed);
 //                leftBackDrive.setPower(-turnspeed);
 //                rightBackDrive.setPower(turnspeed);
 //                zValue = gyro.getIntegratedZValue();
@@ -378,8 +387,8 @@ public class HardwareHelper {
 //            while (caller.opModeIsActive() && Math.abs(zValue - absHeading) > 1 && runtime.seconds() < stopTime);
 //        } else {
 //            do {
-//                leftMidDrive.setPower(turnspeed);
-//                rightMidDrive.setPower(-turnspeed);
+//                leftFrontDrive.setPower(turnspeed);
+//                rightFrontDrive.setPower(-turnspeed);
 //                leftBackDrive.setPower(turnspeed);
 //                rightBackDrive.setPower(-turnspeed);
 //                zValue = gyro.getIntegratedZValue();
@@ -388,8 +397,8 @@ public class HardwareHelper {
 //            }
 //            while (caller.opModeIsActive() && Math.abs(zValue - absHeading) > 1 && runtime.seconds() < stopTime);
 //        }
-//        leftMidDrive.setPower(0.0);
-//        rightMidDrive.setPower(0.0);
+//        leftFrontDrive.setPower(0.0);
+//        rightFrontDrive.setPower(0.0);
 //        leftBackDrive.setPower(0.0);
 //        rightBackDrive.setPower(0.0);
 //        return Math.abs(gyro.getIntegratedZValue() - absHeading) <= 1;
@@ -420,8 +429,8 @@ statements are true than the code will stop working, 2. I don't know what else.
                              double leftInches, double rightInches,
                              double timeoutS) throws InterruptedException {
 
-        int newLeftMidTarget;
-        int newRightMidTarget;
+        int newLeftFrontTarget = -1;
+        int newRightFrontTarget = -1;
         int newLeftBackTarget;
         int newRightBackTarget;
         //int getHeading = gyro.getIntegratedZValue();
@@ -432,53 +441,60 @@ statements are true than the code will stop working, 2. I don't know what else.
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-       // if ( robotType == FULLAUTO ) {
-           // leftMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-           // rightMidDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //}
-
-
+        if ( robotType == REVTROLLBOT ) {
+           leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+           rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
         /*
          * Determine new target position and pass to motor controller
          */
-       // if ( robotType == FULLAUTO ) {
-         //   newLeftMidTarget = leftMidDrive.getCurrentPosition() + (int) Math.round(leftInches * encoderInch);
-           // newRightMidTarget = rightMidDrive.getCurrentPosition() + (int) Math.round(rightInches * encoderInch);
-        //} else {
-            newLeftMidTarget = 0;
-            newRightMidTarget = 0;
-       // }
+        if ( robotType == REVTROLLBOT ) {
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) Math.round(leftInches * encoderInch);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) Math.round(rightInches * encoderInch);
+        }
         newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)Math.round(leftInches * encoderInch);
         newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)Math.round(rightInches * encoderInch);
-//        caller.telemetry.addLine("encoderDrive-MID:")
-//                .addData("Left Tgt POS: ", newLeftMidTarget)
-//                .addData("Right Tgt POS:" ,  newRightMidTarget);
-//        caller.telemetry.addLine("EncoderDrive-BCK:")
-//                .addData("Left Tgt POS: ", newLeftBackTarget)
-//                .addData("Right Tgt POS: ", newRightBackTarget);
-//        caller.telemetry.update();
 
         boolean lmEncoderSet = false;
         boolean rmEncoderSet = false;
         boolean lbEncoderSet = false;
         boolean rbEncoderSet = false;
 
+        caller.telemetry.addLine("encoderDrive-FRONT:")
+                .addData("Left Tgt POS: ", newLeftFrontTarget)
+                .addData("Right Tgt POS:" ,  newRightFrontTarget);
+        caller.telemetry.addLine("EncoderDrive-BCK:")
+                .addData("Left Tgt POS: ", newLeftBackTarget)
+                .addData("Right Tgt POS: ", newRightBackTarget);
+        caller.telemetry.addLine("EncoderSet:")
+                .addData("LB: ", lbEncoderSet)
+                .addData("RB: ", rbEncoderSet)
+                .addData("LM: ", lmEncoderSet)
+                .addData("RM: ", rmEncoderSet);
+        caller.telemetry.update();
+
         lbEncoderSet = setEncoderPosition(caller, leftBackDrive, newLeftBackTarget, encoderTimeout);
         rbEncoderSet = setEncoderPosition(caller, rightBackDrive, newRightBackTarget, encoderTimeout);
-      //  if ( robotType == FULLAUTO ) {
-        //    lmEncoderSet = setEncoderPosition(caller, leftMidDrive, newLeftMidTarget, encoderTimeout);
-       //     rmEncoderSet = setEncoderPosition(caller, rightMidDrive, newRightMidTarget, encoderTimeout);
-        //} else {
+        if ( robotType == FULLAUTO ) {
+            lmEncoderSet = setEncoderPosition(caller, leftFrontDrive, newLeftFrontTarget, encoderTimeout);
+            rmEncoderSet = setEncoderPosition(caller, rightFrontDrive, newRightFrontTarget, encoderTimeout);
+        } else {
             lmEncoderSet = true;
             rmEncoderSet = true;
-      //  }
-//        caller.telemetry.addLine("EncoderSet:")
-//                .addData("LB: ", lbEncoderSet)
-//                .addData("RB: ", rbEncoderSet)
-//                .addData("LM: ", lmEncoderSet)
-//                .addData("RM: ", rmEncoderSet);
-//        caller.telemetry.update();
+        }
+        caller.telemetry.addLine("encoderDrive-FRONT:")
+                .addData("Left Tgt POS: ", newLeftFrontTarget)
+                .addData("Right Tgt POS:" ,  newRightFrontTarget);
+        caller.telemetry.addLine("EncoderDrive-BCK:")
+                .addData("Left Tgt POS: ", newLeftBackTarget)
+                .addData("Right Tgt POS: ", newRightBackTarget);
+        caller.telemetry.addLine("EncoderSet:")
+                .addData("LB: ", lbEncoderSet)
+                .addData("RB: ", rbEncoderSet)
+                .addData("LM: ", lmEncoderSet)
+                .addData("RM: ", rmEncoderSet);
+        caller.telemetry.update();
         if ( ! (lmEncoderSet && lbEncoderSet && rmEncoderSet && rbEncoderSet) ) {
             caller.telemetry.addLine("Encoders CANNOT be set, aborting OpMode");
             caller.telemetry.update();
@@ -488,9 +504,9 @@ statements are true than the code will stop working, 2. I don't know what else.
 
         // reset the timeout time and start motion.
 
-//        caller.telemetry.addLine("Encoder Drive: ")
-//                .addData("PowerSet: ", "%.4f", Math.abs(speed));
-//        caller.telemetry.update();
+        caller.telemetry.addLine("Encoder Drive: ")
+                .addData("PowerSet: ", "%.4f", Math.abs(speed));
+        caller.telemetry.update();
 
         // keep looping while we are still active, and there is time left, and motors haven't made position.
         boolean isBusy;
@@ -518,43 +534,43 @@ statements are true than the code will stop working, 2. I don't know what else.
             leftBackDrive.setPower(leftPower);
             rightBackDrive.setPower(rightPower);
 
-         //   if(robotType == FULLAUTO){
-           //     leftMidDrive.setPower(leftPower);
-             //   rightMidDrive.setPower(rightPower);
-            //}
+            if( robotType == REVTROLLBOT ){
+                leftFrontDrive.setPower(leftPower);
+                rightFrontDrive.setPower(rightPower);
+            }
             caller.telemetry.addData("Power:", "Left Power %.2f, Right Power %.2f", leftPower, rightPower);
             caller.telemetry.update();
             lbCurPos = leftBackDrive.getCurrentPosition();
             rbCurPos = rightBackDrive.getCurrentPosition();
-         //   if ( robotType == FULLAUTO ) {
-          //      lmCurPos = leftMidDrive.getCurrentPosition();
-          //      rmCurPos = rightMidDrive.getCurrentPosition();
-          //  } else {
+            if ( robotType == REVTROLLBOT ) {
+                lmCurPos = leftFrontDrive.getCurrentPosition();
+                rmCurPos = rightFrontDrive.getCurrentPosition();
+            } else {
                 lmCurPos = Integer.MAX_VALUE;
                 rmCurPos = Integer.MAX_VALUE;
-          //  }
+            }
             isBusy = (Math.abs(lbCurPos - newLeftBackTarget) >= 5) && (Math.abs(rbCurPos - newRightBackTarget) >= 5);
-       //     if ( robotType == FULLAUTO )
-        //        isBusy = isBusy && (Math.abs(lmCurPos - newLeftMidTarget) >= 5) && (Math.abs(rmCurPos - newRightMidTarget) >= 5);
+            if ( robotType == REVTROLLBOT )
+                isBusy = isBusy && (Math.abs(lmCurPos - newLeftFrontTarget) >= 5) && (Math.abs(rmCurPos - newRightFrontTarget) >= 5);
         }
         while (caller.opModeIsActive() && isBusy && runtime.seconds() < stopTime);
 
         // Stop all motion;
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
-       // if ( robotType == FULLAUTO ) {
-        //    leftMidDrive.setPower(0);
-        //    rightMidDrive.setPower(0);
-       // }
+        if ( robotType == REVTROLLBOT ) {
+            leftFrontDrive.setPower(0);
+            rightFrontDrive.setPower(0);
+        }
 
         // Turn off RUN_TO_POSITION
 
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //  if ( robotType == FULLAUTO ) {
-      //      leftMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //      rightMidDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //  }
+        if ( robotType == REVTROLLBOT ) {
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     /**
@@ -567,9 +583,9 @@ statements are true than the code will stop working, 2. I don't know what else.
     public void normalDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == TROLLBOT ) {
-            leftMidDrive.setPower(leftPower);
-            rightMidDrive.setPower(rightPower);
+        if ( robotType == REVTROLLBOT ) {
+            leftFrontDrive.setPower(leftPower);
+            rightFrontDrive.setPower(rightPower);
         }
         caller.telemetry.addData("normalDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
     }
@@ -584,9 +600,9 @@ statements are true than the code will stop working, 2. I don't know what else.
     public void sideDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(-leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == FULLTELEOP || robotType == TROLLBOT ) {
-                leftMidDrive.setPower(leftPower);
-                rightMidDrive.setPower(-rightPower);
+        if ( robotType == REVTROLLBOT ) {
+                leftFrontDrive.setPower(leftPower);
+                rightFrontDrive.setPower(-rightPower);
         }
         caller.telemetry.addData("sideDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
     }
