@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -36,8 +38,8 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_S
 public class HardwareHelper {
 
     /* Public OpMode members, things they can use */
-    public DcMotor leftFrontDrive = null;   private static final String cfgLMidDrive   = "L Front";
-    public DcMotor rightFrontDrive = null;  private static final String cfgRMidDrive   = "R Front";
+    public DcMotor leftFrontDrive = null;   private static final String cfgLFrontDrive   = "L Front";
+    public DcMotor rightFrontDrive = null;  private static final String cfgRFrontDrive   = "R Front";
     public DcMotor leftBackDrive = null;  private static final String cfgLBckDrive   = "L Back";
     public DcMotor rightBackDrive = null; private static final String cfgRtBckDrive  = "R Back";
     public DcMotor rightManip = null; private static final String  cfgrightManip = "R Manip";
@@ -46,8 +48,8 @@ public class HardwareHelper {
     public DcMotor lift = null; private static final String  cfgLift = "Lift";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
-    public ModernRoboticsI2cGyro imu = null; private static final String cfgIMU = "imu";
-    public Servo       servotest = null; private static final String cfgServoTest = "servo";
+    public BNO055IMU imu = null; private static final String cfgIMU = "imu";
+    public Servo servotest = null; private static final String cfgServoTest = "servo";
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
@@ -56,13 +58,7 @@ public class HardwareHelper {
     //Position change down below wuld enable the color sensor to move up and down 4.5 degrees
     static final double poscha = 0.020;
 
-
-
-
-
-
-
-        //Down below will set the current position
+    //Down below will set the current position
     static final double curpos = 0;
 
 
@@ -152,6 +148,10 @@ public class HardwareHelper {
     }
 
 
+    /**
+     * Adjust the color arm by moving it up if we're at the starting point and down if we're
+     * up at the top point.  Uses the poscha (positiion change) from setting above.
+     */
     public void colorArmAdjust(){
         double curpos = colorArm.getPosition();
         if(curpos == cArmDeploy)
@@ -167,26 +167,22 @@ public class HardwareHelper {
             colorArm.setPosition(cArmDeploy);
         }
     }
+
     /**
      * This method is used to initialize all motors and set them with directions and other
-     * parameters as necessary basd on the robot type.
+     * parameters as necessary based on the robot type.
      */
     private void initMotor() {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
                 robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ||
-                robotType == SENSORTEST || robotType == REVTROLLBOT ) {
+                robotType == SENSORTEST || robotType == REVTROLLBOT )
+        {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
 
-            //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
-            if ( robotType == REVTROLLBOT ) {
-                leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-                rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-            } else {
-                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            }
+            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -194,7 +190,9 @@ public class HardwareHelper {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT ||
+                    robotType == TROLLBOTMANIP )
+            {
                 lift = hwMap.dcMotor.get(cfgLift);
                 lift.setDirection(DcMotor.Direction.REVERSE);
                 waitForReset(lift, 2000);
@@ -206,8 +204,8 @@ public class HardwareHelper {
                 }
             }
             if ( robotType == REVTROLLBOT ) {
-                leftFrontDrive = hwMap.dcMotor.get(cfgLMidDrive);
-                rightFrontDrive = hwMap.dcMotor.get(cfgRMidDrive);
+                leftFrontDrive = hwMap.dcMotor.get(cfgLFrontDrive);
+                rightFrontDrive = hwMap.dcMotor.get(cfgRFrontDrive);
                 rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
                 leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
                 rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -225,17 +223,19 @@ public class HardwareHelper {
              */
 
             boolean resetOk = false;
-            if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
+            if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ||
+                    robotType == REVTROLLBOT )
+            {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
-               // if ( robotType == FULLAUTO )
-                 //   resetOk = resetOk && waitForReset(leftFrontDrive, rightFrontDrive, 2000);
+                if ( robotType == FULLAUTO )
+                    resetOk = resetOk && waitForReset(leftFrontDrive, rightFrontDrive, 2000);
                 if (resetOk) {
                     leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                  //  if ( robotType == FULLAUTO ) {
-                   //     leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                     //   rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                 //   }
+                    if ( robotType == FULLAUTO ) {
+                        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
                 }
             }
         }
@@ -282,6 +282,20 @@ public class HardwareHelper {
         /* Get the Gyro */
         if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
+        } else if ( robotType == REVTROLLBOT ) {
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            imu = hwMap.get(BNO055IMU.class, cfgIMU);
+            //imu = (BNO055IMU) hwMap.gyroSensor.get(cfgIMU);
+            imu.initialize(parameters);
         }
 
     }
@@ -587,6 +601,7 @@ statements are true than the code will stop working, 2. I don't know what else.
             leftFrontDrive.setPower(leftPower);
             rightFrontDrive.setPower(rightPower);
         }
+        caller.telemetry.addData("sideDrive:", "Not called - no power");
         caller.telemetry.addData("normalDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
     }
 
@@ -605,6 +620,7 @@ statements are true than the code will stop working, 2. I don't know what else.
                 rightFrontDrive.setPower(-rightPower);
         }
         caller.telemetry.addData("sideDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
+        caller.telemetry.addData("normalDrive:", "Not called - no power");
     }
 
     /**

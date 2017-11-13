@@ -32,10 +32,16 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLBOT;
@@ -64,8 +70,6 @@ public class Krab_Drive extends OpMode {
     @Override
     public void init() {
         robot.robot_init(hardwareMap);
-        robot.rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Status", "Initialized");
     }
 
@@ -97,7 +101,17 @@ public class Krab_Drive extends OpMode {
         } else {
             robot.normalDrive(this, 0.0, 0.0);
         }
-
+        int red = robot.color.red();
+        int blue = robot.color.blue();
+        int green = robot.color.green();
+        telemetry.addData("Color:", "Blue %d, Red %d, Green %d", blue, red, green);
+        telemetry.addData("Encoders:", "LF - %d, RF - %d, LB - %d, RB - %d",
+                robot.leftFrontDrive.getCurrentPosition(),
+                robot.rightFrontDrive.getCurrentPosition(),
+                robot.leftBackDrive.getCurrentPosition(),
+                robot.rightBackDrive.getCurrentPosition());
+        Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("Gyro Heading:", "%.1f", AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     } // loop
 
     /*,
