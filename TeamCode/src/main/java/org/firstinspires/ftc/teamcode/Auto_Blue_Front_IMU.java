@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLAUTO;
 
 /**
  * Created by FTC8424 on 1/14/2017.
@@ -14,9 +15,8 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
  */
 @Autonomous(name = "Auto Blue Front IMU", group = "TEST")
 public class Auto_Blue_Front_IMU extends LinearOpMode {
-    HardwareHelper robot = new HardwareHelper(FULLAUTO);
+    HardwareHelper robot = new HardwareHelper(REVTROLLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,26 +29,27 @@ public class Auto_Blue_Front_IMU extends LinearOpMode {
         // bPrevState and bCurrState represent the previous and current state of the button.
         boolean bPrevState = false;
         boolean bCurrState = false;
-        int heading = 0;
+        double heading = 0;
         double driveSpeed = robot.DRIVE_SPEED;
         robot.color.enableLed(true);
         sleep(1000L);
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
+        /*  Not needed with REV IMU gyro
         robot.gyro.calibrate();
         while(!isStopRequested() && robot.gyro.isCalibrating()){
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
+        */
         while ( !isStarted() ) {
-            robot.gyro.resetZAxisIntegrator();
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-        robot.deploy(robot.colorArm);
+//        robot.deploy(robot.colorArm);
 
         sleep(1500);
         if ( !opModeIsActive() ) return;
@@ -56,9 +57,7 @@ public class Auto_Blue_Front_IMU extends LinearOpMode {
         double turnInch = 2;
         colorTimer = runtime.milliseconds();
 
-
          int times = 0;
-
         do {
             sleep(10);
             blueValue = robot.color.blue();
@@ -69,34 +68,33 @@ public class Auto_Blue_Front_IMU extends LinearOpMode {
 
             if ( times > 0)
             {
-                robot.colorArmAdjust();
+//                robot.colorArmAdjust();
                 if( times % 3 == 0)
                 {
                     robot.encoderDrive(this, 0.25, 0.5, -0.5 ,1);
-
                 }
             }
             times++;
         } while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
 
-
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
-            telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
             //robot.gyroTurn(this, 360-15, 3);
-            robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+//            robot.deploy(robot.colorArm);
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else if ( blueValue < redValue ) {
@@ -104,28 +102,33 @@ public class Auto_Blue_Front_IMU extends LinearOpMode {
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 15, 3);
-            robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+//            robot.deploy(robot.colorArm);
+            heading = robot.getHeading();
+            telemetry.addData("Color", "red");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "red");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "red");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "cant detect color");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-            robot.deploy(robot.colorArm);
+//            robot.deploy(robot.colorArm);
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
+            telemetry.addData("Color", "cant detect color");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
@@ -134,51 +137,51 @@ public class Auto_Blue_Front_IMU extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 23, 23, 5);
-        telemetry.addData("Gyro:", heading);
-        telemetry.update();
-        robot.gyro.resetZAxisIntegrator();
-        sleep(1000);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
         if ( robot.gyroTurn(this, 250, 10) == false) {
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Gyro", "turn unsuccessful");
             telemetry.update();
             this.stop();
         }
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 36, 36, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 18, 18, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
+        /*
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
             robot.rightManip.setPower(0.75);
         } while ( opModeIsActive() && runtime.milliseconds() < manipTimer+2000 );
+        */
         robot.encoderDrive(this, robot.DRIVE_SPEED, -4, -4, 10);
+        /*
         robot.leftManip.setPower(0);
         robot.rightManip.setPower(0);
+        */
     }
 }

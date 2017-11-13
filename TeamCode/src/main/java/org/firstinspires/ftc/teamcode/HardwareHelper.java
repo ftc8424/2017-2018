@@ -7,16 +7,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.SENSORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
@@ -65,7 +69,7 @@ public class HardwareHelper {
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
-        TROLLBOT_SERVOTEST, SENSORTEST, REVTROLLBOT
+        TROLLBOT_SERVOTEST, SENSORTEST, REVTROLLBOT, REVTROLLAUTO
     }
 
     /*
@@ -176,7 +180,7 @@ public class HardwareHelper {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
                 robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST ||
-                robotType == SENSORTEST || robotType == REVTROLLBOT )
+                robotType == SENSORTEST || robotType == REVTROLLBOT || robotType == REVTROLLAUTO )
         {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
@@ -186,7 +190,8 @@ public class HardwareHelper {
             rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == REVTROLLBOT ) {
+            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == REVTROLLBOT )
+            {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
@@ -203,7 +208,7 @@ public class HardwareHelper {
                     rightManip.setDirection(DcMotor.Direction.REVERSE);
                 }
             }
-            if ( robotType == REVTROLLBOT ) {
+            if ( robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
                 leftFrontDrive = hwMap.dcMotor.get(cfgLFrontDrive);
                 rightFrontDrive = hwMap.dcMotor.get(cfgRFrontDrive);
                 rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -224,15 +229,15 @@ public class HardwareHelper {
 
             boolean resetOk = false;
             if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ||
-                    robotType == REVTROLLBOT )
+                    robotType == REVTROLLBOT || robotType == REVTROLLAUTO )
             {
                 resetOk = waitForReset(leftBackDrive, rightBackDrive, 2000);
-                if ( robotType == FULLAUTO )
+                if ( robotType == FULLAUTO || robotType == REVTROLLAUTO || robotType == REVTROLLBOT )
                     resetOk = resetOk && waitForReset(leftFrontDrive, rightFrontDrive, 2000);
                 if (resetOk) {
                     leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if ( robotType == FULLAUTO ) {
+                    if ( robotType == FULLAUTO || robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
                         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
@@ -244,7 +249,7 @@ public class HardwareHelper {
         if ( robotType != TROLLBOT_SERVOTEST ) {
             leftBackDrive.setPower(0);
             rightBackDrive.setPower(0);
-            if ( robotType == REVTROLLBOT ) {
+            if ( robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
                 leftFrontDrive.setPower(0);
                 rightFrontDrive.setPower(0);
 
@@ -256,7 +261,7 @@ public class HardwareHelper {
      * This method is used to initialize servos and set their positions.
      */
     private void initServo() {
-        if ( robotType == TROLLBOT_SERVOTEST || robotType == REVTROLLBOT ) {
+        if ( robotType == TROLLBOT_SERVOTEST || robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
             servotest = hwMap.servo.get(cfgServoTest);
         }
 
@@ -273,7 +278,7 @@ public class HardwareHelper {
 
         /* Set the sensors based on type */
         if ( robotType == AUTOTEST || robotType == COLORTEST || robotType == FULLAUTO ||
-                robotType == FULLTELEOP || robotType == REVTROLLBOT ) {
+                robotType == FULLTELEOP || robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
             color = hwMap.colorSensor.get(cfgrpColorSensor);
         }
 
@@ -282,7 +287,7 @@ public class HardwareHelper {
         /* Get the Gyro */
         if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
-        } else if ( robotType == REVTROLLBOT ) {
+        } else if ( robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
             // Set up the parameters with which we will use our IMU. Note that integration
             // algorithm here just reports accelerations to the logcat log; it doesn't actually
             // provide positional information.
@@ -297,7 +302,32 @@ public class HardwareHelper {
             //imu = (BNO055IMU) hwMap.gyroSensor.get(cfgIMU);
             imu.initialize(parameters);
         }
+    }
 
+    /**
+     * Get the current heading, in degrees of 0-360 (double), where 0-90 is clockwise on the
+     * robot and 270-359 is counter-clockwise on the robot.  This is how the ModernRobotics I2C
+     * gyro works.  The Bosch/REV Expansion Hub integrated IMU uses values from -179.9 to 179.9
+     * with the negative on the clockwise side of the robot.  Given that, we need to alter the
+     * values to return so they match the MR gyro (so the code doesn't have to change much, just
+     * calling this method rather than gyro.getHeading().
+     *
+     * @return
+     *      The heading in positive degrees
+     */
+    public double getHeading() {
+        double retVal = 0;
+
+        if ( gyro != null ) {
+            retVal = gyro.getHeading();
+        }
+        if ( imu != null ) {
+            retVal = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            if ( retVal < 0 )
+                retVal = 360 + retVal;
+            retVal = 360 - retVal;
+        }
+        return retVal;
     }
 
     /**
@@ -314,20 +344,20 @@ public class HardwareHelper {
      * @throws InterruptedException
      */
     public boolean gyroTurn(LinearOpMode caller,
-                            int heading,
+                            double heading,
                             double timeoutS) throws InterruptedException {
         int zValue;
-        int gHeading;
+        double gHeading;
         int heading360;
         int absHeading;
-        int deltaHeading;
+        double deltaHeading;
         double rightPower;
         double leftPower;
         double turnspeed = TURN_SPEED;
         double stopTime = runtime.seconds() + timeoutS;
 
         do {
-            gHeading = gyro.getHeading();
+            gHeading = getHeading();
             //zValue = gyro.getIntegratedZValue();
             //heading360 = zValue % 360;
 //            if ( heading360 > 0 )
@@ -336,7 +366,7 @@ public class HardwareHelper {
 //                absHeading = heading360 + 360;
             //deltaHeading = absHeading - heading;
             //caller.telemetry.addData("gyroTurn:", "delta: %d absHeading: %d, currently at %d going to %d", deltaHeading, absHeading, zValue, heading);
-            caller.telemetry.addData("gyroTurn:", "gHeading: %d, going to %d", gHeading, heading);
+            caller.telemetry.addData("gyroTurn:", "gHeading: %.1f, going to %.1f", gHeading, heading);
             caller.telemetry.update();
             //caller.sleep(1000);
 //            if (Math.abs(deltaHeading) <= 180 && heading360 > 180) {
@@ -359,17 +389,17 @@ public class HardwareHelper {
                 leftPower = turnspeed;
                 rightPower = -turnspeed;
             }
-            if ( robotType == REVTROLLBOT ) {
+            if ( robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
                 leftFrontDrive.setPower(leftPower);
                 rightFrontDrive.setPower(rightPower);
             }
             leftBackDrive.setPower(leftPower);
             rightBackDrive.setPower(rightPower);
-            gHeading = gyro.getHeading();
+            gHeading = getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
-        if ( robotType == REVTROLLBOT ) {
+        if ( robotType == REVTROLLBOT || robotType == REVTROLLAUTO ) {
             leftFrontDrive.setPower(0.0);
             rightFrontDrive.setPower(0.0);
         }

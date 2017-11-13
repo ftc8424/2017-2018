@@ -12,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
  * Autonomous blue, in the back (farthest audience)
  *
  */
-@Autonomous(name = "Auto Red Back", group = "BlueSide")
+@Autonomous(name = "Auto Red Back", group = "RedSide")
 public class Auto_Red_Back extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();

@@ -32,18 +32,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REVTROLLBOT;
 
 /**
@@ -110,8 +103,8 @@ public class Krab_Drive extends OpMode {
                 robot.rightFrontDrive.getCurrentPosition(),
                 robot.leftBackDrive.getCurrentPosition(),
                 robot.rightBackDrive.getCurrentPosition());
-        Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("Gyro Heading:", "%.1f", AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+        telemetry.addData("Gyro Heading:", "%.1f",
+                robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     } // loop
 
     /*,
