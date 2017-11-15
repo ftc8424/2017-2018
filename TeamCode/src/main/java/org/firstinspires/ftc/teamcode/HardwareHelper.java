@@ -307,10 +307,10 @@ public class HardwareHelper {
     /**
      * Get the current heading, in degrees of 0-360 (double), where 0-90 is clockwise on the
      * robot and 270-359 is counter-clockwise on the robot.  This is how the ModernRobotics I2C
-     * gyro works.  The Bosch/REV Expansion Hub integrated IMU uses values from -179.9 to 179.9
-     * with the negative on the clockwise side of the robot.  Given that, we need to alter the
-     * values to return so they match the MR gyro (so the code doesn't have to change much, just
-     * calling this method rather than gyro.getHeading().
+     * gyro works when it's mounted upside down.  The Bosch/REV Expansion Hub integrated IMU uses
+     * values from -179.9 to 179.9 with the negative on the clockwise side of the robot.
+     * Given that, we need to alter the values to return so they match the MR gyro (so the code
+     * doesn't have to change much, just calling this method rather than gyro.getHeading().
      *
      * @return
      *      The heading in positive degrees
