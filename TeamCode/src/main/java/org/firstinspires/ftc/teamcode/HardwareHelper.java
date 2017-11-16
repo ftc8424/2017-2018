@@ -45,6 +45,7 @@ public class HardwareHelper {
     public DcMotor     lift = null; private static final String  cfgLift = "Lift";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
+    public BNO055IMU imu = null; private static final String cfgIMU = "imu";
     public Servo       servotest = null; private static final String cfgServoTest = "servo";
 
     /* Servo positions, adjust as necessary. */
@@ -133,6 +134,8 @@ public class HardwareHelper {
         initServo();
         initSensor();
     }
+
+
 
     /**
      * This is the method used for 180 degree servos.  It gets their current position and sets
@@ -276,6 +279,21 @@ public class HardwareHelper {
         }
 
     }
+     public double getHeading() {
+        if( imu != null){
+            gyro = gyro;
+        }
+        else if( gyro != null){
+            if(gyro() >= 0 && gyro <= 179){
+                gyro = 360 - gyro;
+
+            else if( gyro <= 0 && gyro >= -179){
+                    gyro = -1 * gyro;
+                }
+        }
+     }
+
+
 
     /**
      * TODO THIS ROUTINE NEEDS TO BE REPLACED - REVERTED due to other errors
