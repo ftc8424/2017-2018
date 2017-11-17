@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
@@ -279,19 +282,27 @@ public class HardwareHelper {
         }
 
     }
-     public double getHeading() {
-        if( imu != null){
-            gyro = gyro;
-        }
-        else if( gyro != null){
-            if(gyro() >= 0 && gyro <= 179){
-                gyro = 360 - gyro;
 
-            else if( gyro <= 0 && gyro >= -179){
-                    gyro = -1 * gyro;
-                }
+    public double getHeading() {
+
+        double retVal;
+
+        if (imu != null) {
+
+            retVal = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+            if (retVal > 0 && retVal < 180) {
+                retVal = 360 - retVal;
+            } else if (retVal < 0 && retVal > -180) {
+                retVal = -1 * retVal;
+            } else if (gyro != null) {
+
+                retVal = gyro.getHeading();
+
+            }
+            return retVal;
         }
-     }
+    }
 
 
 
@@ -309,20 +320,20 @@ public class HardwareHelper {
      * @throws InterruptedException
      */
     public boolean gyroTurn(LinearOpMode caller,
-                            int heading,
+                            double heading,
                             double timeoutS) throws InterruptedException {
         int zValue;
-        int gHeading;
+        double gHeading;
         int heading360;
         int absHeading;
-        int deltaHeading;
+        double deltaHeading;
         double rightPower;
         double leftPower;
         double turnspeed = TURN_SPEED;
         double stopTime = runtime.seconds() + timeoutS;
 
         do {
-            gHeading = gyro.getHeading();
+            gHeading = getHeading();
             //zValue = gyro.getIntegratedZValue();
             //heading360 = zValue % 360;
 //            if ( heading360 > 0 )
@@ -331,7 +342,7 @@ public class HardwareHelper {
 //                absHeading = heading360 + 360;
             //deltaHeading = absHeading - heading;
             //caller.telemetry.addData("gyroTurn:", "delta: %d absHeading: %d, currently at %d going to %d", deltaHeading, absHeading, zValue, heading);
-            caller.telemetry.addData("gyroTurn:", "gHeading: %d, going to %d", gHeading, heading);
+            caller.telemetry.addData("gyroTurn:", "gHeading: %.1f, going to %d", gHeading, heading);
             caller.telemetry.update();
             //caller.sleep(1000);
 //            if (Math.abs(deltaHeading) <= 180 && heading360 > 180) {
