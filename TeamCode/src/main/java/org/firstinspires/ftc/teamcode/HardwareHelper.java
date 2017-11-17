@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -18,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REV_TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.SENSORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
@@ -71,7 +74,7 @@ public class HardwareHelper {
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
-        TROLLBOT_SERVOTEST, SENSORTEST
+        TROLLBOT_SERVOTEST, SENSORTEST, REV_TROLLBOT
     }
 
     /*
@@ -279,13 +282,28 @@ public class HardwareHelper {
         if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
 
-        }
 
+        }
+        else if( robotType == REV_TROLLBOT){
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            imu = hwMap.get(BNO055IMU.class, cfgIMU);
+            //imu = (BNO055IMU) hwMap.gyroSensor.get(cfgIMU);
+            imu.initialize(parameters);
+        }
     }
 
     public double getHeading() {
 
-        double retVal;
+        double retVal = 0;
 
         if (imu != null) {
 
@@ -295,13 +313,15 @@ public class HardwareHelper {
                 retVal = 360 - retVal;
             } else if (retVal < 0 && retVal > -180) {
                 retVal = -1 * retVal;
-            } else if (gyro != null) {
-
-                retVal = gyro.getHeading();
-
             }
-            return retVal;
+
         }
+        else if (gyro != null) {
+
+            retVal = gyro.getHeading();
+
+        }
+        return retVal;
     }
 
 
