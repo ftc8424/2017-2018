@@ -48,7 +48,7 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-/*
+
         robot.deploy(robot.colorArm);
 
         sleep(1500);
@@ -62,11 +62,6 @@ public class Auto_Blue_Back extends LinearOpMode {
 
         do {
             sleep(10);
-            blueValue = robot.color.blue();
-            redValue = robot.color.red();
-            telemetry.addData("color blue", blueValue);
-            telemetry.addData("color red", redValue);
-            telemetry.update();
 
             if ( times > 0)
             {
@@ -78,8 +73,21 @@ public class Auto_Blue_Back extends LinearOpMode {
                 }
             }
             times++;
+
+            blueValue = robot.color.blue();
+            redValue = robot.color.red();
+            telemetry.addData("color blue", blueValue);
+            telemetry.addData("color red", redValue);
+            telemetry.update();
+
         } while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
+
+        if ( times > 0)
+        {
+            int moveTimes = times/3;
+            robot.encoderDrive(this,0.25,-0.5 * moveTimes,0.5 * moveTimes,1);
+        }
 
 
         if ( blueValue > redValue ) {
@@ -88,16 +96,16 @@ public class Auto_Blue_Back extends LinearOpMode {
             robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
             //robot.gyroTurn(this, 360-15, 3);
             robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else if ( blueValue < redValue ) {
@@ -106,31 +114,31 @@ public class Auto_Blue_Back extends LinearOpMode {
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 15, 3);
             robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-*/
+
         //This following code will allow the robot to move forward on the balancing stone, which was messing with the
         //gyroTurn, So it will move forward 21 inches, and then turn where it was supposed to.
 

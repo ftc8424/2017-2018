@@ -60,11 +60,6 @@ public class Auto_Red_Front extends LinearOpMode {
 
         do {
             sleep(10);
-            blueValue = robot.color.blue();
-            redValue = robot.color.red();
-            telemetry.addData("color blue", blueValue);
-            telemetry.addData("color red", redValue);
-            telemetry.update();
 
             if ( times > 0)
             {
@@ -76,8 +71,22 @@ public class Auto_Red_Front extends LinearOpMode {
                 }
             }
             times++;
-        }while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
+
+            blueValue = robot.color.blue();
+            redValue = robot.color.red();
+            telemetry.addData("color blue", blueValue);
+            telemetry.addData("color red", redValue);
+            telemetry.update();
+
+        } while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
+
+        if ( times > 0)
+        {
+            int moveTimes = times/3;
+            robot.encoderDrive(this,0.25,-0.5 * moveTimes,0.5 * moveTimes,1);
+        }
+
 
 
 
