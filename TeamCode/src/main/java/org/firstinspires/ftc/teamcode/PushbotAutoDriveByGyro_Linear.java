@@ -61,7 +61,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  *  If this is not the case, then the INIT should be performed again.
  *
  *  Note: in this example, all angles are referenced to the initial coordinate frame set during the
- *  the Gyro Calibration process, or whenever the program issues a resetZAxisIntegrator() call on the Gyro.
+ *  the Gyro Calibration process, or whenever the program issues a gyroResetZAxisIntegrator() call on the Gyro.
  *
  *  The angle of movement/rotation is assumed to be a standardized rotation around the robot Z axis,
  *  which means that a Positive rotation is Counter Clock Wise, looking down on the field.

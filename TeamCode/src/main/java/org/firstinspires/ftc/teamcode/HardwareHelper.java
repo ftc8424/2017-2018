@@ -300,6 +300,8 @@ public class HardwareHelper {
             imu.initialize(parameters);
         }
     }
+    //__________________________________________________________________________________________________
+    //BELOW IS THE getHeading METHOD
 
     public double getHeading() {
 
@@ -318,13 +320,41 @@ public class HardwareHelper {
         }
         else if (gyro != null) {
 
-            retVal = gyro.getHeading();
+            retVal = getHeading();
 
         }
         return retVal;
     }
+    //ABOVE IS THE getHeading METHOD
+//__________________________________________________________________________________________________
+
+    public void gyroCalibrate() {
+
+        if (gyro != null) {
+        gyro.calibrate();
+
+        }
 
 
+    }
+
+    public boolean gyroIsCalibrating() {
+
+        if (gyro != null) {
+            return gyro.isCalibrating();
+        }
+        else{
+            return false;
+        }
+    }
+
+
+    public void gyroResetZAxisIntegrator() {
+
+        if (gyro != null) {
+            gyro.resetZAxisIntegrator();
+        }
+    }
 
     /**
      * TODO THIS ROUTINE NEEDS TO BE REPLACED - REVERTED due to other errors
@@ -391,7 +421,7 @@ public class HardwareHelper {
             }
             leftBackDrive.setPower(leftPower);
             rightBackDrive.setPower(rightPower);
-            gHeading = gyro.getHeading();
+            gHeading = getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );

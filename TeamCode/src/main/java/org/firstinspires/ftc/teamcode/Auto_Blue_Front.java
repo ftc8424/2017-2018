@@ -31,21 +31,21 @@ public class Auto_Blue_Front extends LinearOpMode {
         // bPrevState and bCurrState represent the previous and current state of the button.
         boolean bPrevState = false;
         boolean bCurrState = false;
-        int heading = 0;
+        double heading = 0;
         double driveSpeed = robot.DRIVE_SPEED;
         robot.color.enableLed(true);
         sleep(1000L);
         robot.color.enableLed(false);
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
-        robot.gyro.calibrate();
-        while(!isStopRequested() && robot.gyro.isCalibrating()){
+        robot.gyroCalibrate();
+        while(!isStopRequested() && robot.gyroIsCalibrating()){
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
         while ( !isStarted() ) {
-            robot.gyro.resetZAxisIntegrator();
-            heading = robot.gyro.getHeading();
+            robot.gyroResetZAxisIntegrator();
+            heading = robot.getHeading();
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -89,16 +89,16 @@ public class Auto_Blue_Front extends LinearOpMode {
             robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
             //robot.gyroTurn(this, 360-15, 3);
             robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else if ( blueValue < redValue ) {
@@ -107,27 +107,27 @@ public class Auto_Blue_Front extends LinearOpMode {
             robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 15, 3);
             robot.deploy(robot.colorArm);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(100);
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
@@ -138,39 +138,39 @@ public class Auto_Blue_Front extends LinearOpMode {
         robot.encoderDrive(this, driveSpeed, 23, 23, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-        robot.gyro.resetZAxisIntegrator();
+        robot.gyroResetZAxisIntegrator();
         sleep(1000);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
         if ( robot.gyroTurn(this, 250, 10) == false) {
-            heading = robot.gyro.getHeading();
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Gyro", "turn unsuccessful");
             telemetry.update();
             this.stop();
         }
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 36, 36, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         if ( !opModeIsActive() ) return;
         robot.gyroTurn(this, 180, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, 18, 18, 10);
-        heading = robot.gyro.getHeading();
+        heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
