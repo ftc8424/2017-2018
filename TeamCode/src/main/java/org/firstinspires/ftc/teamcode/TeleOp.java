@@ -64,7 +64,7 @@ public class TeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
-    long LiftMaxHeight =  3600 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftMaxHeight =  5400 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
     double liftSpeed = 0.4;
     int liftStoneHeight = 691;
@@ -159,6 +159,7 @@ public class TeleOp extends OpMode {
         }
         telemetry.addData("lift position", LiftCurrentPosition);
         telemetry.addData("lift power", robot.lift.getPower());
+        telemetry.addData("Encoders:", "Left:  %,d, Right:  %,d", robot.leftBackDrive.getCurrentPosition(), robot.rightBackDrive.getCurrentPosition());
         telemetry.addData("Drive:", "Lft Power %.2f, Rgt Power %.2f", leftStickVal, rightStickVal);
         telemetry.addData("Status", "Debug 1 at: " + runtime.toString());
 

@@ -94,6 +94,7 @@ public class Auto_Red_Front extends LinearOpMode {
             telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
+            sleep(1000);
             robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             robot.deploy(robot.colorArm);
             telemetry.addData("Gyro:", heading);
@@ -106,6 +107,7 @@ public class Auto_Red_Front extends LinearOpMode {
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Color", "red");
             telemetry.update();
+            sleep(1000);
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -124,7 +126,7 @@ public class Auto_Red_Front extends LinearOpMode {
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 23, 23, 5);
+        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -145,7 +147,7 @@ public class Auto_Red_Front extends LinearOpMode {
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 35, 35, 10);
+        robot.encoderDrive(this, driveSpeed, 30, 30, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
@@ -156,7 +158,7 @@ public class Auto_Red_Front extends LinearOpMode {
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 18, 18, 10);
+        robot.encoderDrive(this, driveSpeed, 6, 6, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();

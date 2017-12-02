@@ -94,7 +94,7 @@ public class Auto_Red_Back extends LinearOpMode {
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.update();
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch ,2);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             //robot.gyroTurn(this, 360-15, 3);
             robot.deploy(robot.colorArm);
             heading = robot.getHeading();
@@ -104,7 +104,7 @@ public class Auto_Red_Back extends LinearOpMode {
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
@@ -112,7 +112,7 @@ public class Auto_Red_Back extends LinearOpMode {
         } else if ( blueValue < redValue ) {
             telemetry.addData("Color", "red");
             telemetry.update();
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 15, 3);
             robot.deploy(robot.colorArm);
             heading = robot.getHeading();
@@ -122,7 +122,7 @@ public class Auto_Red_Back extends LinearOpMode {
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             //robot.gyroTurn(this, 0, 3);
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
@@ -144,7 +144,7 @@ public class Auto_Red_Back extends LinearOpMode {
         //gyroTurn, So it will move forward 21 inches, and then turn where it was supposed to.
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
+        robot.encoderDrive(this, driveSpeed, 20, 20, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -155,7 +155,7 @@ public class Auto_Red_Back extends LinearOpMode {
 //TODO make the turn less steep.
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
-        if ( robot.gyroTurn(this, 120, 10) == false) {
+        if ( robot.gyroTurn(this, 119, 10) == false) {
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Gyro", "turn unsuccessful");

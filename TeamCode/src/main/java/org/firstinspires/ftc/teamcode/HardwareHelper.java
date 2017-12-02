@@ -95,7 +95,7 @@ public class HardwareHelper {
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.25;     // Nominal half speed for better accuracy.
+    static final double     TURN_SPEED              = 0.20;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -202,7 +202,7 @@ public class HardwareHelper {
                if (robotType == FULLTELEOP || robotType == FULLAUTO ) {
                    leftManip = hwMap.dcMotor.get(cfgleftManip);
                    rightManip = hwMap.dcMotor.get(cfgrightManip);
-                   rightManip.setDirection(DcMotor.Direction.REVERSE);
+                   leftManip.setDirection(DcMotor.Direction.REVERSE);
                } else if (robotType != FULLAUTO){
                    leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                    rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
@@ -279,12 +279,12 @@ public class HardwareHelper {
 
 
         /* Get the Gyro */
-        if ( robotType == AUTOTEST || robotType == FULLAUTO || robotType == COLORTEST ) {
+        if ( robotType == AUTOTEST || robotType == COLORTEST ) {
            gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get(cfgGyro);
 
 
         }
-        else if( robotType == REV_TROLLBOT){
+        else if( robotType == FULLAUTO){
             // Set up the parameters with which we will use our IMU. Note that integration
             // algorithm here just reports accelerations to the logcat log; it doesn't actually
             // provide positional information.
@@ -392,7 +392,7 @@ public class HardwareHelper {
 //                absHeading = heading360 + 360;
             //deltaHeading = absHeading - heading;
             //caller.telemetry.addData("gyroTurn:", "delta: %d absHeading: %d, currently at %d going to %d", deltaHeading, absHeading, zValue, heading);
-            caller.telemetry.addData("gyroTurn:", "gHeading: %.1f, going to %d", gHeading, heading);
+            caller.telemetry.addData("gyroTurn:", "gHeading: %.1f, going to %.1f", gHeading, heading);
             caller.telemetry.update();
             //caller.sleep(1000);
 //            if (Math.abs(deltaHeading) <= 180 && heading360 > 180) {
@@ -424,7 +424,7 @@ public class HardwareHelper {
             gHeading = getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
-        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 1 && runtime.seconds() < stopTime );
+        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.5 && runtime.seconds() < stopTime );
         if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
             leftMidDrive.setPower(0.0);
             rightMidDrive.setPower(0.0);
@@ -980,12 +980,12 @@ statements are true than the code will stop working, 2. I don't know what else.
  *
  *    NeveRest 60:1 Motors:
  *    ---------------------
- *	    7 pulses per revolution of hall effect encoder, and a 60:1 gearbox, so 7*60 ==
- *	  420 pulses per revolution of the encoder, there are 4 revolutions of encoder to output
- *	 1680 pulses per revolution of the OUTPUT SHAFT (e.g., the motor shaft)
- *	  105 revolutions per minute of output shaft (RPM), so (1680 * 105) / 60 ==
- *	 2940 pulses per second is the max Speed setting of the encoders on this motor
- *	
+ *        7 pulses per revolution of hall effect encoder, and a 60:1 gearbox, so 7*60 ==
+ *      420 pulses per revolution of the encoder, there are 4 revolutions of encoder to output
+ *     1680 pulses per revolution of the OUTPUT SHAFT (e.g., the motor shaft)
+ *      105 revolutions per minute of output shaft (RPM), so (1680 * 105) / 60 ==
+ *     2940 pulses per second is the max Speed setting of the encoders on this motor
+ *
  *    NeveRest 40:1 Motors:
  *    ---------------------
  *          7 pulses per revolution of hall effect encoder, and a 40:1 gearbox, so 7*40 ==

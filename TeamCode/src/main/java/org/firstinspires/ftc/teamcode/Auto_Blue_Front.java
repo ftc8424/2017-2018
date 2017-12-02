@@ -142,7 +142,7 @@ public class Auto_Blue_Front extends LinearOpMode {
         //gyroTurn, So it will move forward 21 inches, and then turn where it was supposed to.
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 23, 23, 5);
+        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -153,7 +153,7 @@ public class Auto_Blue_Front extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
-        if ( robot.gyroTurn(this, 250, 10) == false) {
+        if ( robot.gyroTurn(this, 248, 10) == false) {
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Gyro", "turn unsuccessful");
