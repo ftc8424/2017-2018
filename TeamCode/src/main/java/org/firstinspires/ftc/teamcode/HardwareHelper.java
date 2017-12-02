@@ -978,6 +978,14 @@ statements are true than the code will stop working, 2. I don't know what else.
  * setting up the setMaxSpeed() when in PID mode, as well as when figuring out the counts per
  * inch mode.
  *
+ *    NeveRest 60:1 Motors:
+ *    ---------------------
+ *	    7 pulses per revolution of hall effect encoder, and a 60:1 gearbox, so 7*60 ==
+ *	  420 pulses per revolution of the encoder, there are 4 revolutions of encoder to output
+ *	 1680 pulses per revolution of the OUTPUT SHAFT (e.g., the motor shaft)
+ *	  105 revolutions per minute of output shaft (RPM), so (1680 * 105) / 60 ==
+ *	 2940 pulses per second is the max Speed setting of the encoders on this motor
+ *	
  *    NeveRest 40:1 Motors:
  *    ---------------------
  *          7 pulses per revolution of hall effect encoder, and a 40:1 gearbox, so 7*40 ==
