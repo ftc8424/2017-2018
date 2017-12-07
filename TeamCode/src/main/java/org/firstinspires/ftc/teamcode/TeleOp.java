@@ -64,7 +64,7 @@ public class TeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
-    long LiftMaxHeight =  5400 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftMaxHeight =  2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
     double liftSpeed = 0.4;
     int liftStoneHeight = 691;
@@ -140,11 +140,11 @@ public class TeleOp extends OpMode {
                 robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 liftLocked = false;
             }
-            if ( LiftCurrentPosition > 0 || LiftMaxHeight == -1 ) {
+            //if ( LiftCurrentPosition > 0 || LiftMaxHeight == -1 ) {
                 robot.lift.setPower(-liftSpeed);
-            } else {
-                robot.lift.setPower(0);
-            }
+            //} else {
+            //    robot.lift.setPower(0);
+            //}
         } else {
             if (liftLocked == false){
                 robot.lift.setPower(0);
@@ -152,7 +152,7 @@ public class TeleOp extends OpMode {
 
         }
         if (gamepad2.a && liftLocked == false){
-            robot.lift.setTargetPosition(liftStoneHeight);
+            robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + liftStoneHeight);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.lift.setPower(liftSpeed);
             liftLocked = true;
@@ -168,11 +168,19 @@ public class TeleOp extends OpMode {
         }
     } // loop
 
+        //if (gamepad2.y) {
+        //robot.waitForReset()
+    }
+
+
+
+
+
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public void stop() {
+    public    void stop() {
         robot.normalDrive(this, 0, 0);
     }
 }
