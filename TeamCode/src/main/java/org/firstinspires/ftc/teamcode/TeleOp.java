@@ -168,9 +168,9 @@ public class TeleOp extends OpMode {
         }
     } // loop
 
-        //if (gamepad2.y) {
+        //if (gamepad2.y) { }
         //robot.waitForReset()
-    }
+
 
 
 
@@ -180,7 +180,7 @@ public class TeleOp extends OpMode {
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public    void stop() {
+    public void stop() {
         robot.normalDrive(this, 0, 0);
     }
 }

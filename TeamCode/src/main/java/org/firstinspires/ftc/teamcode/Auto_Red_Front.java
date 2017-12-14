@@ -61,7 +61,7 @@ public class Auto_Red_Front extends LinearOpMode {
         do {
             sleep(10);
 
-            if ( times > 0)
+            if ( times > 0 && times < 6)
             {
                 robot.colorArmAdjust();
                 if( times % 3 == 0)

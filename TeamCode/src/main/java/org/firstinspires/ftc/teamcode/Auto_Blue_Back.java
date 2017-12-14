@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
@@ -49,7 +50,7 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.deploy(robot.colorArm);
+
 
         sleep(1500);
         if ( !opModeIsActive() ) return;
@@ -57,13 +58,13 @@ public class Auto_Blue_Back extends LinearOpMode {
         double turnInch = 2;
         colorTimer = runtime.milliseconds();
 
-
+        robot.color.enableLed(false);
          int times = 0;
 
         do {
             sleep(10);
 
-            if ( times > 0)
+            if ( times > 0 && times < 6)
             {
                 robot.colorArmAdjust();
                 if( times % 3 == 0)
@@ -80,7 +81,10 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.addData("color red", redValue);
             telemetry.update();
 
-        } while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
+
+        }
+
+        while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
 
         if ( times > 0)
