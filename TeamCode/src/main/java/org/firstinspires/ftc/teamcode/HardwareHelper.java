@@ -196,7 +196,7 @@ public class HardwareHelper {
             }
             if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 lift = hwMap.dcMotor.get(cfgLift);
-                lift.setDirection(DcMotor.Direction.REVERSE);
+                //lift.setDirection(DcMotor.Direction.REVERSE);
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 waitForReset(lift, 2000);
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

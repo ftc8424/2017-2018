@@ -50,7 +50,7 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.update();
         }
 
-
+        robot.deploy(robot.colorArm);
 
         sleep(1500);
         if ( !opModeIsActive() ) return;
@@ -79,8 +79,9 @@ public class Auto_Blue_Back extends LinearOpMode {
             redValue = robot.color.red();
             telemetry.addData("color blue", blueValue);
             telemetry.addData("color red", redValue);
+            telemetry.addData("times", times);
             telemetry.update();
-
+            sleep(1000);
 
         }
 
