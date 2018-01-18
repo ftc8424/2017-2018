@@ -64,9 +64,9 @@ public class TeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
-    long LiftMaxHeight =  5000; // 2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftMaxHeight = 5200; // 2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
-    double liftSpeed = 0.4;
+    double liftSpeed = 0.6;
     int liftStoneHeight = 691;
     boolean liftLocked = false;
 

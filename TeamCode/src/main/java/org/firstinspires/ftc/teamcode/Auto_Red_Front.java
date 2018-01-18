@@ -22,7 +22,7 @@ public class Auto_Red_Front extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot.robot_init(hardwareMap);
-
+        int whichColumn = 0;
         int blueValue = 0;
         int redValue = 0;
 
@@ -37,17 +37,56 @@ public class Auto_Red_Front extends LinearOpMode {
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
         robot.gyroCalibrate();
-        while(!isStopRequested() && robot.gyroIsCalibrating()){
+        while(!isStopRequested() && (robot.gyroIsCalibrating() || whichColumn == 0)){
+
+
+
+            if(whichColumn == 2) telemetry.addData("You have chosen:", "Center Column");
+
+            else if(whichColumn == 1 ) telemetry.addData("You have chosen:", "Left Column");
+
+            else if( whichColumn == 3) telemetry.addData("You have chosen:", "Right Column");
+
+            else telemetry.addData("Choose a", "Column");
+
+            if (gamepad1.a || gamepad1.y) {
+
+                whichColumn = 2;
+            }
+
+            if (gamepad1.x) {
+
+                whichColumn = 1;
+            }
+
+            if (gamepad1.b) {
+
+                whichColumn = 3;
+            }
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
         while ( !isStarted() ) {
-            robot.gyroResetZAxisIntegrator();
+            //robot.gyro.gyroResetZAxisIntegrator();
             heading = robot.getHeading();
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
+
+
+            if(whichColumn == 2) telemetry.addData("Column Selected:", "Center Column");
+
+            else if(whichColumn == 1 ) telemetry.addData("Column Selected:", "Left Column");
+
+            else if( whichColumn == 3) telemetry.addData("Column Selected:", "Right Column");
+
+            else {
+                telemetry.addData("Column Selected", "Center (Automatic)");
+                whichColumn = 2;
+            }
+
             telemetry.update();
         }
+
         robot.deploy(robot.colorArm);
 
         sleep(1500);
