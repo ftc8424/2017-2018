@@ -202,9 +202,9 @@ public class Auto_Blue_Front extends LinearOpMode {
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-
+//38.25 means the left column, 31.5 means the center column, 24.75 means the right column (from driver view)
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 36, 36, 10);
+        robot.encoderDrive(this, driveSpeed, 24.75, 24.75, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
@@ -215,7 +215,7 @@ public class Auto_Blue_Front extends LinearOpMode {
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 18, 18, 10);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();

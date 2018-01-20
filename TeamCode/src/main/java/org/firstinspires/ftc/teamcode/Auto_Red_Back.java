@@ -188,7 +188,7 @@ public class Auto_Red_Back extends LinearOpMode {
         //gyroTurn, So it will move forward 21 inches, and then turn where it was supposed to.
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 20, 20, 5);
+        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -199,7 +199,8 @@ public class Auto_Red_Back extends LinearOpMode {
 //TODO make the turn less steep.
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
-        if ( robot.gyroTurn(this, 119, 10) == false) {
+        //110 heading is Right column from outside, 135, is left column, 122.5 is middle
+        if ( robot.gyroTurn(this, 135, 10) == false) {
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Gyro", "turn unsuccessful");
@@ -211,7 +212,7 @@ public class Auto_Red_Back extends LinearOpMode {
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 19, 19, 10);
+        robot.encoderDrive(this, driveSpeed, 20, 20, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();

@@ -184,20 +184,20 @@ public class Auto_Red_Front extends LinearOpMode {
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-
+//38.25 means the left column, 31.5 means the center column, 24.75 means the right column (from driver view)
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 30, 30, 10);
+        robot.encoderDrive(this, driveSpeed, 24.75, 24.75, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         if ( !opModeIsActive() ) return;
-        robot.gyroTurn(this, 170, 10);
+        robot.gyroTurn(this, 180, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 6, 6, 10);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
