@@ -5,14 +5,26 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 
-/**
- * Created by FTC8424 on 1/14/2017.
- *
- * Autonomous blue, in the back (farthest audience)
- *
- */
+
+
+
 @Autonomous(name = "Auto Blue Back", group = "BlueSide")
 public class Auto_Blue_Back extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(FULLAUTO);
@@ -35,18 +47,17 @@ public class Auto_Blue_Back extends LinearOpMode {
         robot.color.enableLed(true);
         sleep(1000L);
         robot.color.enableLed(false);
-        telemetry.addData("Init:" ,"Waiting for start");
+        telemetry.addData("Init:", "Waiting for start");
         telemetry.update();
         robot.gyroCalibrate();
-        while(!isStopRequested() && (robot.gyroIsCalibrating() || whichColumn == 0)){
+        while (!isStopRequested() && (robot.gyroIsCalibrating() || whichColumn == 0)) {
 
 
+            if (whichColumn == 2) telemetry.addData("You have chosen:", "Center Column");
 
-            if(whichColumn == 2) telemetry.addData("You have chosen:", "Center Column");
+            else if (whichColumn == 1) telemetry.addData("You have chosen:", "Left Column");
 
-            else if(whichColumn == 1 ) telemetry.addData("You have chosen:", "Left Column");
-
-            else if( whichColumn == 3) telemetry.addData("You have chosen:", "Right Column");
+            else if (whichColumn == 3) telemetry.addData("You have chosen:", "Right Column");
 
             else telemetry.addData("Choose a", "Column");
 
@@ -67,26 +78,26 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
-        while ( !isStarted() ) {
+        while (!isStarted()) {
             //robot.gyro.gyroResetZAxisIntegrator();
             heading = robot.getHeading();
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
-
-
-            if(whichColumn == 2) telemetry.addData("Column Selected:", "Center Column");
-
-            else if(whichColumn == 1 ) telemetry.addData("Column Selected:", "Left Column");
-
-            else if( whichColumn == 3) telemetry.addData("Column Selected:", "Right Column");
-
-            else {
-                telemetry.addData("Column Selected", "Center (Automatic)");
-                whichColumn = 2;
-            }
-
             telemetry.update();
         }
+        if (whichColumn == 2) telemetry.addData("Column Selected:", "Center Column");
+
+        else if (whichColumn == 1) telemetry.addData("Column Selected:", "Left Column");
+
+        else if (whichColumn == 3) telemetry.addData("Column Selected:", "Right Column");
+
+        else {
+            telemetry.addData("Column Selected", "Center (Automatic)");
+            whichColumn = 2;
+        }
+
+        telemetry.update();
+
 
 
         robot.deploy(robot.colorArm);
