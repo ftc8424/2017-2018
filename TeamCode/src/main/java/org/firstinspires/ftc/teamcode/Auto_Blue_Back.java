@@ -29,7 +29,8 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 public class Auto_Blue_Back extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
-
+    //NEEDED FOR VUFORIA CODE
+    public VuforiaLocalizer vuforia;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,34 +51,45 @@ public class Auto_Blue_Back extends LinearOpMode {
         telemetry.addData("Init:", "Waiting for start");
         telemetry.update();
         robot.gyroCalibrate();
+
+//Start of initialization of Vuforia Code
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "AaknBtv/////AAAAmfjrebUDlEXxppBL0lNYYmF+OrNdDEb+iCZTJVBlijmEOVgaagv19vhNOnlYuDK9CDBvcAzED7y/GhmxAzxn9GKPz6PMCbATksji1FgAfR7zLxWRJKGUxLSQoFMHfAem/xSKUwuTNOohEXW74qhy+KD6VuCwmZFamYthtv/ChxI4o2lwNI4aJDmmpK4jf2I5gr1ULsWML3+OauayyNp74Xa7MLV0mEY2m3sWjnFiZyoygU06ht4+PY2Z/S9/bJvxSgqVfzzFAHzepMJoKAvH+iuDhdHctpnIyXSBtVwcYdoc4GX1+0VjZUb3LzyNSje3NzvUZ8s/n7crdkujseblOuRh8HdqJYAwGCRQrW9mVt+F\n";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTrackables.activate();
+        telemetry.addData("Column", whichColumn);
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+
         while (!isStopRequested() && (robot.gyroIsCalibrating() || whichColumn == 0)) {
 
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
-            if (whichColumn == 2) telemetry.addData("You have chosen:", "Center Column");
+                if (vuMark == RelicRecoveryVuMark.CENTER) {
 
-            else if (whichColumn == 1) telemetry.addData("You have chosen:", "Left Column");
+                    whichColumn = 2;
 
-            else if (whichColumn == 3) telemetry.addData("You have chosen:", "Right Column");
 
-            else telemetry.addData("Choose a", "Column");
+                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
 
-            if (gamepad1.a || gamepad1.y) {
+                    whichColumn = 1;
 
-                whichColumn = 2;
-            }
 
-            if (gamepad1.x) {
-
-                whichColumn = 1;
-            }
-
-            if (gamepad1.b) {
+                } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
 
                 whichColumn = 3;
-            }
+            }  else{
+                    whichColumn = 'U';
+                }
+        }
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
+
         while (!isStarted()) {
             //robot.gyro.gyroResetZAxisIntegrator();
             heading = robot.getHeading();
@@ -85,16 +97,7 @@ public class Auto_Blue_Back extends LinearOpMode {
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-        if (whichColumn == 2) telemetry.addData("Column Selected:", "Center Column");
 
-        else if (whichColumn == 1) telemetry.addData("Column Selected:", "Left Column");
-
-        else if (whichColumn == 3) telemetry.addData("Column Selected:", "Right Column");
-
-        else {
-            telemetry.addData("Column Selected", "Center (Automatic)");
-            whichColumn = 2;
-        }
 
         telemetry.update();
 
@@ -209,13 +212,36 @@ public class Auto_Blue_Back extends LinearOpMode {
 
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
-        if ( robot.gyroTurn(this, 250, 10) == false) {
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.addData("Gyro", "turn unsuccessful");
-            telemetry.update();
-            this.stop();
+        //250 heading is Right column from outside, 225, is left column, 237.5 is middle
+
+        if(vuMark == RelicRecoveryVuMark.RIGHT) {
+            if (robot.gyroTurn(this, 250, 10) == false) {
+                heading = robot.getHeading();
+                telemetry.addData("Gyro:", heading);
+                telemetry.addData("Gyro", "turn unsuccessful");
+                telemetry.update();
+                this.stop();
+            }
         }
+            if(vuMark == RelicRecoveryVuMark.LEFT) {
+                if (robot.gyroTurn(this, 225, 10) == false) {
+                    heading = robot.getHeading();
+                    telemetry.addData("Gyro:", heading);
+                    telemetry.addData("Gyro", "turn unsuccessful");
+                    telemetry.update();
+                    this.stop();
+
+                }
+            }
+                if(vuMark == RelicRecoveryVuMark.CENTER){
+                if ( robot.gyroTurn(this, 237.5, 10) == false) {
+                    heading = robot.getHeading();
+                    telemetry.addData("Gyro:", heading);
+                    telemetry.addData("Gyro", "turn unsuccessful");
+                    telemetry.update();
+                    this.stop();
+                }
+            }
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
