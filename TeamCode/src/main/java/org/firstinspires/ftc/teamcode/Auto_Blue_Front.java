@@ -5,6 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 
@@ -18,6 +24,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 public class Auto_Blue_Front extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
+    VuforiaLocalizer vuforia;
 
 
     @Override
@@ -39,55 +46,44 @@ public class Auto_Blue_Front extends LinearOpMode {
         telemetry.addData("Init:" ,"Waiting for start");
         telemetry.update();
         robot.gyroCalibrate();
-        while(!isStopRequested() && (robot.gyroIsCalibrating() || whichColumn == 0)){
+        // TODO - Production comment previous two lines and uncomment next, don't need view
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        parameters.vuforiaLicenseKey = "AaknBtv/////AAAAmfjrebUDlEXxppBL0lNYYmF+OrNdDEb+iCZTJVBlijmEOVgaagv19vhNOnlYuDK9CDBvcAzED7y/GhmxAzxn9GKPz6PMCbATksji1FgAfR7zLxWRJKGUxLSQoFMHfAem/xSKUwuTNOohEXW74qhy+KD6VuCwmZFamYthtv/ChxI4o2lwNI4aJDmmpK4jf2I5gr1ULsWML3+OauayyNp74Xa7MLV0mEY2m3sWjnFiZyoygU06ht4+PY2Z/S9/bJvxSgqVfzzFAHzepMJoKAvH+iuDhdHctpnIyXSBtVwcYdoc4GX1+0VjZUb3LzyNSje3NzvUZ8s/n7crdkujseblOuRh8HdqJYAwGCRQrW9mVt+F\n";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        // The ACTIVATE needs to go AFTER you press the Start button, not before
 
 
-
-            if(whichColumn == 2) telemetry.addData("You have chosen:", "Center Column");
-
-            else if(whichColumn == 1 ) telemetry.addData("You have chosen:", "Left Column");
-
-            else if( whichColumn == 3) telemetry.addData("You have chosen:", "Right Column");
-
-            else telemetry.addData("Choose a", "Column");
-
-            if (gamepad1.a || gamepad1.y) {
-
-                whichColumn = 2;
-            }
-
-            if (gamepad1.x) {
-
-                whichColumn = 1;
-            }
-
-            if (gamepad1.b) {
-
-                whichColumn = 3;
-            }
+        while (!isStopRequested() && (robot.gyroIsCalibrating())) {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
         }
-        while ( !isStarted() ) {
+
+        while (!isStarted()) {
             //robot.gyro.gyroResetZAxisIntegrator();
             heading = robot.getHeading();
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
-
-
-            if(whichColumn == 2) telemetry.addData("Column Selected:", "Center Column");
-
-            else if(whichColumn == 1 ) telemetry.addData("Column Selected:", "Left Column");
-
-            else if( whichColumn == 3) telemetry.addData("Column Selected:", "Right Column");
-
-            else {
-                telemetry.addData("Column Selected", "Center (Automatic)");
-                whichColumn = 2;
-            }
-
             telemetry.update();
         }
+
+        relicTrackables.activate();
+        RelicRecoveryVuMark vuMark = null;
+        double startTime = runtime.milliseconds();
+
+        do {
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        } while ( opModeIsActive() && vuMark == RelicRecoveryVuMark.UNKNOWN && runtime.milliseconds() < startTime+5000 );
+        telemetry.addData("Vumark", "%s is visible", vuMark);
+        telemetry.update();
+
+
+
+
+
 
         robot.deploy(robot.colorArm);
 
@@ -204,18 +200,44 @@ public class Auto_Blue_Front extends LinearOpMode {
         telemetry.update();
 //38.25 means the left column, 31.5 means the center column, 24.75 means the right column (from driver view)
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 24.75, 24.75, 10);
-        heading = robot.getHeading();
-        telemetry.addData("Gyro:", heading);
-        telemetry.update();
-        if ( !opModeIsActive() ) return;
-        robot.gyroTurn(this, 180, 10);
-        heading = robot.getHeading();
-        telemetry.addData("Gyro:", heading);
-        telemetry.update();
+
+        if(vuMark == RelicRecoveryVuMark.RIGHT) {
+            robot.encoderDrive(this, driveSpeed, 24.75, 24.75, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+            if ( !opModeIsActive() ) return;
+            robot.gyroTurn(this, 180, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        }
+        else if(vuMark == RelicRecoveryVuMark.LEFT) {
+            robot.encoderDrive(this, driveSpeed, 38.25, 38.25, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+            if ( !opModeIsActive() ) return;
+            robot.gyroTurn(this, 180, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        }
+        else{
+            robot.encoderDrive(this, driveSpeed, 31.5, 31.5, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+            if ( !opModeIsActive() ) return;
+            robot.gyroTurn(this, 180, 10);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        }
+
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 5);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();

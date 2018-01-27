@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 
 
 @Autonomous(name = "Auto Blue Back COACH", group = "BlueSide")
+@Disabled
 public class Auto_Blue_Back_Coach extends LinearOpMode {
     HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
@@ -24,7 +26,6 @@ public class Auto_Blue_Back_Coach extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot.robot_init(hardwareMap);
-        int whichColumn = 0;
         int blueValue = 0;
         int redValue = 0;
         double colorTimer = 0;
@@ -41,10 +42,10 @@ public class Auto_Blue_Back_Coach extends LinearOpMode {
         robot.gyroCalibrate();
 
 //Start of initialization of Vuforia Code
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         // TODO - Production comment previous two lines and uncomment next, don't need view
-        // VoforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = "AaknBtv/////AAAAmfjrebUDlEXxppBL0lNYYmF+OrNdDEb+iCZTJVBlijmEOVgaagv19vhNOnlYuDK9CDBvcAzED7y/GhmxAzxn9GKPz6PMCbATksji1FgAfR7zLxWRJKGUxLSQoFMHfAem/xSKUwuTNOohEXW74qhy+KD6VuCwmZFamYthtv/ChxI4o2lwNI4aJDmmpK4jf2I5gr1ULsWML3+OauayyNp74Xa7MLV0mEY2m3sWjnFiZyoygU06ht4+PY2Z/S9/bJvxSgqVfzzFAHzepMJoKAvH+iuDhdHctpnIyXSBtVwcYdoc4GX1+0VjZUb3LzyNSje3NzvUZ8s/n7crdkujseblOuRh8HdqJYAwGCRQrW9mVt+F\n";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
@@ -74,29 +75,15 @@ public class Auto_Blue_Back_Coach extends LinearOpMode {
         do {
             vuMark = RelicRecoveryVuMark.from(relicTemplate);
         } while ( opModeIsActive() && vuMark == RelicRecoveryVuMark.UNKNOWN && runtime.milliseconds() < startTime+5000 );
-        if (vuMark == RelicRecoveryVuMark.CENTER) {
-            whichColumn = 2;
-        } else if (vuMark == RelicRecoveryVuMark.LEFT) {
-            whichColumn = 1;
-        } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-            whichColumn = 3;
-        }
-        telemetry.addData("Vumark", "% is visible", vuMark);
-        telemetry.addData("COLUMN", "%s is found", whichColumn == 3 ? "RIGHT" : whichColumn == 2 ? "CENTER" : whichColumn == 1 ? "LEFT" : "UNKNOWN");
+        telemetry.addData("Vumark", "%s is visible", vuMark);
         telemetry.update();
-        if ( whichColumn == 0 ) whichColumn = 2;    // Default to CENTER if can't find picture
-
 
         robot.deploy(robot.colorArm);
-
-        sleep(1500);
-        if ( !opModeIsActive() ) return;
+       if ( !opModeIsActive() ) return;
         robot.color.enableLed(true);
         double turnInch = 2;
         colorTimer = runtime.milliseconds();
-
-        robot.color.enableLed(false);
-         int times = 0;
+        int times = 0;
 
         do {
             sleep(10);
@@ -206,18 +193,16 @@ public class Auto_Blue_Back_Coach extends LinearOpMode {
                 telemetry.update();
                 this.stop();
             }
-        }
-            if(vuMark == RelicRecoveryVuMark.LEFT) {
-                if (robot.gyroTurn(this, 225, 10) == false) {
-                    heading = robot.getHeading();
-                    telemetry.addData("Gyro:", heading);
-                    telemetry.addData("Gyro", "turn unsuccessful");
-                    telemetry.update();
-                    this.stop();
+        } else if(vuMark == RelicRecoveryVuMark.LEFT) {
+            if (robot.gyroTurn(this, 225, 10) == false) {
+                heading = robot.getHeading();
+                telemetry.addData("Gyro:", heading);
+                telemetry.addData("Gyro", "turn unsuccessful");
+                telemetry.update();
+                this.stop();
 
-                }
             }
-                if(vuMark == RelicRecoveryVuMark.CENTER){
+        } else {  // Default to CENTER
                 if ( robot.gyroTurn(this, 237.5, 10) == false) {
                     heading = robot.getHeading();
                     telemetry.addData("Gyro:", heading);
@@ -225,7 +210,7 @@ public class Auto_Blue_Back_Coach extends LinearOpMode {
                     telemetry.update();
                     this.stop();
                 }
-            }
+        }
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
