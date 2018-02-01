@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
@@ -64,7 +65,7 @@ public class TeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(FULLTELEOP);
 
-    long LiftMaxHeight = 5200; // 2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
+    long LiftMaxHeight = -1; // 2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
     double liftSpeed = 0.6;
     int liftStoneHeight = 691;
@@ -141,7 +142,7 @@ public class TeleOp extends OpMode {
                 liftLocked = false;
             }
             if ( LiftCurrentPosition > 0 || LiftMaxHeight == -1 ) {
-                robot.lift.setPower(-liftSpeed);
+                robot.lift.setPower(Range.clip(-liftSpeed-0.25,-1.0,1.0));
             } else {
                 robot.lift.setPower(0);
             }
