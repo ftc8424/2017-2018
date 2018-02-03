@@ -48,6 +48,7 @@ public class HardwareHelper {
     public DcMotor       rightManip = null; private static final String  cfgrightManip = "R Manip";
     public DcMotor       leftManip = null; private static final String  cfgleftManip = "L Manip";
     public Servo        colorArm = null; private static final String cfgcolorArm = "C Arm";
+    public Servo       colorGate = null; private static final String cfgcolorGate = "C Gate";
     public DcMotor     lift = null; private static final String  cfgLift = "Lift";
     public ColorSensor color = null; private static final String cfgrpColorSensor = "Color Sensor";
     public ModernRoboticsI2cGyro gyro = null; private static final String cfgGyro = "Gyro";
@@ -56,7 +57,9 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.61;
+    public static final double cArmDeploy = 0.65;
+    public static final double cGateStart = 0;
+    public static final double cGateDeploy = 0.65;
 
     //Position change down below wuld enable the color sensor to move up and down 4.5 degrees
     static final double poscha = 0.020;
@@ -95,7 +98,7 @@ public class HardwareHelper {
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.9;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.85;     // Nominal half speed for better accuracy.
+    static final double     TURN_SPEED              = 0.2;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -154,6 +157,7 @@ public class HardwareHelper {
     public void deploy(Servo servo) {
         double targetPosition = 0;
         if (servo.equals(colorArm)) targetPosition = servo.getPosition()== cArmStart ? cArmDeploy : cArmStart;
+        else if (servo.equals(colorGate)) targetPosition = servo.getPosition()== cGateStart ? cGateDeploy : cGateStart;
         else return;
         servo.setPosition(targetPosition);
     }
@@ -263,6 +267,9 @@ public class HardwareHelper {
         if ( robotType == COLORTEST || robotType == FULLTELEOP || robotType == FULLAUTO ) {
             colorArm = hwMap.servo.get(cfgcolorArm);
             colorArm.setPosition(cArmStart);
+            colorGate = hwMap.servo.get(cfgcolorGate);
+            colorGate.setPosition(cGateStart);
+
         }
     }
 

@@ -83,7 +83,8 @@ public class Auto_Red_Back extends LinearOpMode {
 
 
 
-
+        robot.deploy(robot.colorGate);
+        sleep(500);
         robot.deploy(robot.colorArm);
 
         sleep(1500);
@@ -132,6 +133,8 @@ public class Auto_Red_Back extends LinearOpMode {
             robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             //robot.gyroTurn(this, 360-15, 3);
             robot.deploy(robot.colorArm);
+            sleep(500);
+            robot.deploy(robot.colorGate);
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -150,6 +153,8 @@ public class Auto_Red_Back extends LinearOpMode {
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             //robot.gyroTurn(this, 15, 3);
             robot.deploy(robot.colorArm);
+            sleep(500);
+            robot.deploy(robot.colorGate);
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -169,7 +174,9 @@ public class Auto_Red_Back extends LinearOpMode {
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.deploy(robot.colorArm);
-            sleep(100);
+            sleep(500);
+            robot.deploy(robot.colorGate);
+
             heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -177,9 +184,12 @@ public class Auto_Red_Back extends LinearOpMode {
 
         //This following code will allow the robot to move forward on the balancing stone, which was messing with the
         //gyroTurn, So it will move forward 21 inches, and then turn where it was supposed to.
+        int driveForwardFirst = 19;
+
+        int driveForwardSecond = 6;
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
+        robot.encoderDrive(this, driveSpeed, 21, 21, 5);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -187,12 +197,15 @@ public class Auto_Red_Back extends LinearOpMode {
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
+        robot.colorArm.setPosition(robot.cArmStart);
 //TODO make the turn less steep.
         if ( !opModeIsActive() ) return;
         //robot.gyroTurn2(this, robot.TURN_SPEED, 265);
         //110 heading is Right column from outside, 135, is left column, 122.5 is middle
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            if (robot.gyroTurn(this, 110, 10) == false) {
+            driveForwardFirst = 28;
+            driveForwardSecond = 2;
+            if (robot.gyroTurn(this, 128, 10) == false) {
                 heading = robot.getHeading();
                 telemetry.addData("Gyro:", heading);
                 telemetry.addData("Gyro", "turn unsuccessful");
@@ -200,7 +213,9 @@ public class Auto_Red_Back extends LinearOpMode {
                 this.stop();
             }
         } else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            if (robot.gyroTurn(this, 135, 10) == false) {
+            driveForwardFirst = 21;
+            driveForwardSecond = 6;
+            if (robot.gyroTurn(this, 107, 10) == false) {
                 heading = robot.getHeading();
                 telemetry.addData("Gyro:", heading);
                 telemetry.addData("Gyro", "turn unsuccessful");
@@ -209,7 +224,9 @@ public class Auto_Red_Back extends LinearOpMode {
 
             }
         } else {  // Default to CENTER
-            if ( robot.gyroTurn(this, 122.5, 10) == false) {
+            driveForwardFirst = 24;
+            driveForwardSecond = 4;
+            if ( robot.gyroTurn(this, 115, 10) == false) {
                 heading = robot.getHeading();
                 telemetry.addData("Gyro:", heading);
                 telemetry.addData("Gyro", "turn unsuccessful");
@@ -217,12 +234,13 @@ public class Auto_Red_Back extends LinearOpMode {
                 this.stop();
             }
         }
+        robot.colorArm.setPosition(robot.cArmStart);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 20, 20, 10);
+        robot.encoderDrive(this,driveSpeed  , driveForwardFirst, driveForwardFirst, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
@@ -231,13 +249,13 @@ public class Auto_Red_Back extends LinearOpMode {
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-
+        robot.colorArm.setPosition(robot.cArmStart);
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 6, 6, 10);
+        robot.encoderDrive(this, driveSpeed, driveForwardSecond, driveForwardSecond, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-
+        robot.colorArm.setPosition(robot.cArmStart);
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
@@ -246,5 +264,6 @@ public class Auto_Red_Back extends LinearOpMode {
         robot.encoderDrive(this, robot.DRIVE_SPEED, -4, -4, 10);
         robot.leftManip.setPower(0);
         robot.rightManip.setPower(0);
+        robot.colorArm.setPosition(robot.cArmStart);
     }
 }
