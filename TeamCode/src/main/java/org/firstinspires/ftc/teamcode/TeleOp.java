@@ -50,7 +50,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMA
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ *v
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
@@ -106,13 +106,37 @@ public class TeleOp extends OpMode {
         double leftStickVal = -gamepad1.left_stick_y;
 
 
+
         robot.normalDrive(this, leftStickVal, rightStickVal);
 
         double rightManipVal = gamepad2.right_stick_y;
         double leftManipVal = gamepad2.left_stick_y;
         robot.leftManip.setPower(leftManipVal);
         robot.rightManip.setPower(rightManipVal);
+        //other one
 
+        boolean rightManipVal2 = gamepad1.right_stick_button;
+        boolean leftManipVal2 = gamepad1.left_stick_button;
+        double rightManipVal2FALSE = gamepad1.right_trigger;
+        double leftManipVal2FALSE = gamepad1.left_trigger;
+
+        if(leftManipVal2 == true) {
+            robot.leftManip.setPower(1);
+        }
+
+        else if(rightManipVal2 == true) {
+            robot.rightManip.setPower(1);
+        }
+        else if( rightManipVal2FALSE > 0 || rightManipVal2FALSE < 0){
+            robot.rightManip.setPower(-1);
+        }
+        else if( leftManipVal2FALSE > 0 || leftManipVal2FALSE < 0){
+            robot.leftManip.setPower(-1);
+        }
+        else{
+            robot.rightManip.setPower(0);
+            robot.leftManip.setPower(0);
+        }
         /*THIS IS WHAT NEEDS TO BE CODED AS PER COACH JERRY:
          *
          * When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
@@ -126,7 +150,7 @@ public class TeleOp extends OpMode {
          */
 
         LiftCurrentPosition = robot.lift.getCurrentPosition();
-        if (gamepad2.dpad_up) {
+        if (gamepad2.right_bumper||gamepad1.right_bumper) {
             if (liftLocked) {
                 robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 liftLocked = false;
@@ -136,7 +160,7 @@ public class TeleOp extends OpMode {
             } else {
                 robot.lift.setPower(0);
             }
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad2.left_bumper||gamepad1.left_bumper) {
             if (liftLocked) {
                 robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 liftLocked = false;
