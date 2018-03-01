@@ -111,62 +111,50 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         } while ( opModeIsActive() && runtime.milliseconds() < colorTimer+10000  && (Math.abs(blueValue-redValue) == 0));
         robot.color.enableLed(false);
 
-        if ( times > 0)
-        {
-            int moveTimes = times/3;
-            robot.encoderDrive(this,0.25,-0.5 * moveTimes,0.5 * moveTimes,1);
-        }
-
-
 
 
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-            sleep(1000);
             robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-            sleep(100);
-            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-        } else if ( blueValue < redValue ) {
+        }
+        else if ( blueValue < redValue ) {
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Color", "red");
             telemetry.update();
-            sleep(1000);
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
             telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
-
-            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-        } else {
+        }
+        else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
-
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
 
-        int driveForwardFirst = 31;
+        int driveForwardFirst = 15;
 
-        int driveForwardSecond = 15;
+        int driveForwardSecond = 1;
 
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, 18, 18, 5);
+        robot.gyroTurn(this, 95, 10);
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -179,79 +167,33 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
-//38.25 means the left column, 31.5 means the center column, 24.75 means the right column (from driver view)
+
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            if (robot.gyroTurn(this, 115, 10) == false) {
-                heading = robot.getHeading();
-                telemetry.addData("Gyro:", heading);
-                telemetry.addData("Gyro", "turn unsuccessful");
-                telemetry.update();
-                this.stop();
-            }
-            driveForwardFirst = 25;
-            driveForwardSecond = 12;
-            robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
-            if ( !opModeIsActive() ) return;
-            robot.gyroTurn(this, 180, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
+            driveForwardFirst = 22;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            if (robot.gyroTurn(this, 115, 10) == false) {
-                heading = robot.getHeading();
-                telemetry.addData("Gyro:", heading);
-                telemetry.addData("Gyro", "turn unsuccessful");
-                telemetry.update();
-                this.stop();
+            driveForwardFirst = 34;
             }
-            driveForwardFirst = 36;
-            driveForwardSecond = 12;
-            robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
-            if ( !opModeIsActive() ) return;
-            robot.gyroTurn(this, 180, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
-        }
         else{
-            if (robot.gyroTurn(this, 115, 10) == false) {
-                heading = robot.getHeading();
-                telemetry.addData("Gyro:", heading);
-                telemetry.addData("Gyro", "turn unsuccessful");
-                telemetry.update();
-                this.stop();
-            }driveForwardFirst = 32;
-            driveForwardSecond = 12;
-            robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
-            if ( !opModeIsActive() ) return;
-            robot.gyroTurn(this, 180, 10);
-            heading = robot.getHeading();
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
+            driveForwardFirst = 28;
         }
         if ( !opModeIsActive() ) return;
-        robot.encoderDrive(this, driveSpeed, driveForwardSecond, driveForwardSecond, 10);
+        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
+
+        robot.gyroTurn(this, 180, 10);
+        robot.encoderDrive(this, driveSpeed, 3, 3, 10);
+
 
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
             robot.rightManip.setPower(0.75);
         } while ( opModeIsActive() && runtime.milliseconds() < manipTimer+2000 );
-        robot.encoderDrive(this, robot.DRIVE_SPEED, -4, -4, 10);
+        robot.encoderDrive(this, driveSpeed, -4, -4, 10);
         robot.leftManip.setPower(0);
         robot.rightManip.setPower(0);
     }
