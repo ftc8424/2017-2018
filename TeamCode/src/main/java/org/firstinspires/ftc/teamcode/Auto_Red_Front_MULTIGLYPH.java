@@ -149,12 +149,15 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
             telemetry.update();
         }
 
-        int driveForwardFirst = 15;
+        int driveForwardFirst = 27;
 
-        int driveForwardSecond = 1;
-
+        int driveForwardSecond = 6;
+        int firstTurn = 0;
         if ( !opModeIsActive() ) return;
-        robot.gyroTurn(this, 95, 10);
+        do robot.encoderDrive(this, driveSpeed, 1, 1, 10);
+        while(robot.gyroTurn(this, 269, 10) && firstTurn == 1);
+        firstTurn++;
+
         telemetry.addData("Gyro:", heading);
         telemetry.update();
         robot.gyroResetZAxisIntegrator();
@@ -163,20 +166,23 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
-
+        int driveSecond = 4;
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = 22;
+            driveForwardFirst = -22;
+            driveForwardSecond = 2;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = 34;
+            driveForwardFirst = -33;
+            driveForwardSecond = 2;
             }
         else{
-            driveForwardFirst = 28;
+            driveForwardFirst = -28;
+            driveForwardSecond = 2;
         }
         if ( !opModeIsActive() ) return;
         robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
@@ -185,7 +191,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         telemetry.update();
 
         robot.gyroTurn(this, 180, 10);
-        robot.encoderDrive(this, driveSpeed, 3, 3, 10);
+        robot.encoderDrive(this, driveSpeed, driveForwardSecond, driveForwardSecond, 10);
 
 
         double manipTimer = runtime.milliseconds();
