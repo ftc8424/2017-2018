@@ -154,8 +154,8 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         int driveForwardSecond = 6;
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
-        do robot.encoderDrive(this, driveSpeed, 1, 1, 10);
-        while(robot.gyroTurn(this, 269, 10) && firstTurn == 1);
+        do robot.encoderDrive(this, driveSpeed, -1, -1, 10);
+        while(robot.gyroTurn(this, 270, 10) && firstTurn == 1);
         firstTurn++;
 
         telemetry.addData("Gyro:", heading);
@@ -174,25 +174,30 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
             driveForwardFirst = -22;
-            driveForwardSecond = 2;
+            //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
             driveForwardFirst = -33;
-            driveForwardSecond = 2;
+            //driveForwardSecond = 20;
             }
         else{
             driveForwardFirst = -28;
-            driveForwardSecond = 2;
+            //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
+        telemetry.update();
         robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
-        telemetry.update();
 
+        robot.gyroTurn(this, 0, 10);
+        robot.leftManip.setPower(-1);
+        robot.rightManip.setPower(-1);
+        robot.encoderDrive(this, driveSpeed, 23, 23, 10);
         robot.gyroTurn(this, 180, 10);
-        robot.encoderDrive(this, driveSpeed, driveForwardSecond, driveForwardSecond, 10);
-
+        robot.leftManip.setPower(-0.1);
+        robot.rightManip.setPower(-0.1);
+        robot.encoderDrive(this, driveSpeed, 33, 33, 10);
 
         double manipTimer = runtime.milliseconds();
         do {
