@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -150,21 +151,13 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         }
 
         int driveForwardFirst = 27;
-
+// Turn on stone
         int driveForwardSecond = 6;
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
-        do robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-        while(robot.gyroTurn(this, 270, 10) && firstTurn == 1);
+         //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
+        robot.gyroTurn(this, 270, 10);
         firstTurn++;
-
-        telemetry.addData("Gyro:", heading);
-        telemetry.update();
-        robot.gyroResetZAxisIntegrator();
-        sleep(1000);
-        heading = robot.getHeading();
-        telemetry.addData("Gyro:", heading);
-        telemetry.update();
 
         int driveSecond = 4;
         heading = robot.getHeading();
@@ -173,7 +166,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = -22;
+            driveForwardFirst = -21;
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
@@ -181,7 +174,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
             //driveForwardSecond = 20;
             }
         else{
-            driveForwardFirst = -28;
+            driveForwardFirst = -26;
             //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
@@ -189,16 +182,19 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
-
+// Off Stone
         robot.gyroTurn(this, 0, 10);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 23, 23, 10);
+        robot.encoderDrive(this, driveSpeed, 21, 21, 10);
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.lift.setPower(0.6);
         robot.gyroTurn(this, 180, 10);
         robot.leftManip.setPower(-0.1);
         robot.rightManip.setPower(-0.1);
-        robot.encoderDrive(this, driveSpeed, 33, 33, 10);
-
+        robot.encoderDrive(this, driveSpeed, 30, 30, 10);
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
