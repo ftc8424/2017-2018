@@ -108,8 +108,8 @@ public class TeleOp extends OpMode {
 
         robot.normalDrive(this, leftStickVal, rightStickVal);
 
-        double rightManipVal = gamepad2.right_stick_y;
-        double leftManipVal = gamepad2.left_stick_y;
+        double rightManipVal = -gamepad2.right_stick_y;
+        double leftManipVal = -gamepad2.left_stick_y;
         robot.leftManip.setPower(leftManipVal);
         robot.rightManip.setPower(rightManipVal);
 

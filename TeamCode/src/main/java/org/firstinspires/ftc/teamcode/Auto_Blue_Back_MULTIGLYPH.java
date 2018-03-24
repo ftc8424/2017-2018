@@ -16,9 +16,9 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 /**
  * Created by FTC8424 on 2/22/2018.
  */
-@Autonomous(name = "Auto Red Front MULTIGLPYH", group = "RedSide")
+@Autonomous(name = "Auto Blue Back MULTIGLPYH", group = "BlueSide")
 
-public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper robot = new HardwareHelper(FULLAUTO);
+public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
     VuforiaLocalizer vuforia;
 
@@ -114,7 +114,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
 
 
 
-        if ( blueValue > redValue ) {
+        if ( blueValue < redValue ) {
             telemetry.addData("Color", "blue");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
@@ -127,7 +127,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-        else if ( blueValue < redValue ) {
+        else if ( blueValue > redValue ) {
             telemetry.addData("Gyro:", heading);
             telemetry.addData("Color", "red");
             telemetry.update();
@@ -156,7 +156,7 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
          //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-        robot.gyroTurn(this, 270, 5); //Turns to 270
+        robot.gyroTurn(this, 0, 10);
         firstTurn++;
 
         int driveSecond = 4;
@@ -166,15 +166,15 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = -19;
+            driveForwardFirst = -4;
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = -34;
+            driveForwardFirst = -0;
             //driveForwardSecond = 20;
             }
         else{
-            driveForwardFirst = -27;
+            driveForwardFirst = -2;
             //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
@@ -183,25 +183,27 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
 // Off Stone
-        robot.gyroTurn(this, 0, 5);
+        robot.gyroTurn(this, 45, 10);
+        robot.gyroTurn(this, 0, 10);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 22, 22, 3);
-        robot.encoderDrive(this, driveSpeed, -4, -4, 3);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(0.6);
-        robot.gyroTurn(this, 180, 10);
+        robot.gyroTurn(this, 315, 10);
         robot.leftManip.setPower(-0.1);
         robot.rightManip.setPower(-0.1);
-        robot.encoderDrive(this, driveSpeed, 22, 22, 5);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
+        robot.gyroTurn(this, 270, 10);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
             robot.rightManip.setPower(0.75);
-        } while ( opModeIsActive() && runtime.milliseconds() < manipTimer+1000 );
-        robot.encoderDrive(this, driveSpeed, -4, -4, 5);
+        } while ( opModeIsActive() && runtime.milliseconds() < manipTimer+2000 );
+        robot.encoderDrive(this, driveSpeed, -4, -4, 10);
         robot.leftManip.setPower(0);
         robot.rightManip.setPower(0);
     }

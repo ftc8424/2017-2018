@@ -97,7 +97,7 @@ public class HardwareHelper {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 2.2;     // Nominal speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.75;     // Nominal speed for better accuracy.
     static final double     TURN_SPEED              = 0.19;    // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
@@ -432,7 +432,7 @@ public class HardwareHelper {
             gHeading = getHeading();
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
-        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.5 && runtime.seconds() < stopTime );
+        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.4 && runtime.seconds() < stopTime );
         if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
             leftMidDrive.setPower(0.0);
             rightMidDrive.setPower(0.0);
