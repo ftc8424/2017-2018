@@ -53,7 +53,9 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         // The ACTIVATE needs to go AFTER you press the Start button, not before
 
-
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.lift.setPower(0.6);//lift
         while (!isStopRequested() && (robot.gyroIsCalibrating())) {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
@@ -157,47 +159,53 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         if ( !opModeIsActive() ) return;
          //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
         robot.gyroTurn(this, 0, 10);
-        firstTurn++;
+       // firstTurn++;
 
         int driveSecond = 4;
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
+// Off Stone
+
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = -4;
+            driveForwardFirst = 10;
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = -0;
+            driveForwardFirst = 20;
             //driveForwardSecond = 20;
             }
         else{
-            driveForwardFirst = -2;
+            driveForwardFirst = 15;
             //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
         telemetry.update();
-        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10);
-        heading = robot.getHeading();
-        telemetry.addData("Gyro:", heading);
-// Off Stone
+        robot.encoderDrive(this, driveSpeed, 20, 20, 10);
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
         robot.gyroTurn(this, 45, 10);
-        robot.gyroTurn(this, 0, 10);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
-        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
-        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.lift.setPower(0.6);
-        robot.gyroTurn(this, 315, 10);
-        robot.leftManip.setPower(-0.1);
-        robot.rightManip.setPower(-0.1);
-        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
+        robot.encoderDrive(this, driveSpeed, 15,15, 10);
+        robot.encoderDrive(this, driveSpeed, -5,-5, 10);
+        robot.leftManip.setPower(-.5);
+        robot.rightManip.setPower(-.5);
         robot.gyroTurn(this, 270, 10);
         robot.encoderDrive(this, driveSpeed, 15, 15, 10);
+        robot.gyroTurn(this,180,5);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
+        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,10);
+        robot.gyroTurn(this,270,5);
+        robot.encoderDrive(this, driveSpeed, 4, 4,10);
+        heading = robot.getHeading();
+        telemetry.addData("Gyro:", heading);
+
+
+
+
+
         double manipTimer = runtime.milliseconds();
         do {
             robot.leftManip.setPower(0.75);
