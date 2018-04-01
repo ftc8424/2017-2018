@@ -76,7 +76,12 @@ public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper ro
         } while ( opModeIsActive() && vuMark == RelicRecoveryVuMark.UNKNOWN && runtime.milliseconds() < startTime+2000 );
         telemetry.addData("Vumark", "%s is visible", vuMark);
         telemetry.update();
-
+        //This should lift the manipuator after it has been started,
+        // but before it makes the move
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.lift.setPower(0.6);
+//This will allow an easy off-stone-move
         robot.deploy(robot.colorGate);
         sleep(500);
         robot.deploy(robot.colorArm);
@@ -149,56 +154,61 @@ public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper ro
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-
         int driveForwardFirst = 27;
 // Turn on stone
         int driveForwardSecond = 6;
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
         //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-
+        robot.gyroTurn(this, 0, 3);
+        // firstTurn++;
 
         int driveSecond = 4;
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
         telemetry.update();
 
+// Off Stone
+
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = -21;
+            driveForwardFirst = 10;
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = -31;
+            driveForwardFirst = 20;
             //driveForwardSecond = 20;
         }
         else{
-            driveForwardFirst = -26;
+            driveForwardFirst = 15;
             //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
         telemetry.update();
-        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst, 10); //primary drive off
-        heading = robot.getHeading();
-        telemetry.addData("Gyro:", heading);
-// Off Stone
-
-        robot.gyroTurn(this, 225, 10); // to get extra glyph
+        robot.encoderDrive(this, driveSpeed, 20, 20, 10);
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
+        robot.gyroTurn(this, 315, 3);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 20, 20, 10);//go get extra glyph
-        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
-        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.lift.setPower(0.6);
-        robot.gyroTurn(this, 135, 10); // turn back with glyph
-        robot.leftManip.setPower(-0.1);
-        robot.rightManip.setPower(-0.1);
-        robot.encoderDrive(this, driveSpeed, 20, 20, 10); // go back with glyph
-        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
+        robot.encoderDrive(this, driveSpeed, 15,15, 10);
+        robot.encoderDrive(this, driveSpeed, -5,-5, 10);
+        robot.leftManip.setPower(-.5);
+        robot.rightManip.setPower(-.5);
+        robot.gyroTurn(this, 90, 3);
+        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
+        robot.gyroTurn(this,180,3);
+        //Dependant on the VuMark
+        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,10);
+        robot.gyroTurn(this,90,3);
+        robot.encoderDrive(this, driveSpeed, 4, 4,10);
+        heading = robot.getHeading();
+        telemetry.addData("Gyro:", heading);
+
+
+
+
+
         double manipTimer = runtime.milliseconds();
-        robot.gyroTurn(this, 180, 10); // turn to cryptobox
-        robot.encoderDrive(this, driveSpeed, 20, 20, 10);//go to cryptobox
-        //dispense glyphs
         do {
             robot.leftManip.setPower(0.75);
             robot.rightManip.setPower(0.75);

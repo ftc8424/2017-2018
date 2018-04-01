@@ -53,9 +53,7 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         // The ACTIVATE needs to go AFTER you press the Start button, not before
 
-        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
-        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.lift.setPower(0.6);//lift
+
         while (!isStopRequested() && (robot.gyroIsCalibrating())) {
             telemetry.addData("Init:", "Calibrating");
             telemetry.update();
@@ -67,6 +65,7 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
             telemetry.addData("Init:", "Calibrated!!");
             telemetry.addData("Gyro:", heading);
             telemetry.update();
+
         }
 
         relicTrackables.activate();
@@ -78,6 +77,11 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         } while ( opModeIsActive() && vuMark == RelicRecoveryVuMark.UNKNOWN && runtime.milliseconds() < startTime+2000 );
         telemetry.addData("Vumark", "%s is visible", vuMark);
         telemetry.update();
+        //This should lift the manipuator after it has been started,
+        // but before it makes the move
+        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
+        robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.lift.setPower(0.6);
 
         robot.deploy(robot.colorGate);
         sleep(500);
@@ -158,7 +162,7 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
          //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-        robot.gyroTurn(this, 0, 10);
+        robot.gyroTurn(this, 0, 3);
        // firstTurn++;
 
         int driveSecond = 4;
@@ -185,19 +189,19 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         telemetry.update();
         robot.encoderDrive(this, driveSpeed, 20, 20, 10);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
-        robot.gyroTurn(this, 45, 10);
+        robot.gyroTurn(this, 45, 3);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
         robot.encoderDrive(this, driveSpeed, 15,15, 10);
         robot.encoderDrive(this, driveSpeed, -5,-5, 10);
         robot.leftManip.setPower(-.5);
         robot.rightManip.setPower(-.5);
-        robot.gyroTurn(this, 270, 10);
+        robot.gyroTurn(this, 270, 3);
         robot.encoderDrive(this, driveSpeed, 15, 15, 10);
-        robot.gyroTurn(this,180,5);
-        robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
+        robot.gyroTurn(this,180,3);
+        //Dependant on the VuMark
         robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,10);
-        robot.gyroTurn(this,270,5);
+        robot.gyroTurn(this,270,3);
         robot.encoderDrive(this, driveSpeed, 4, 4,10);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
