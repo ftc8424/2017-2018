@@ -121,36 +121,55 @@ public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper ro
 
         if ( blueValue > redValue ) {
             telemetry.addData("Color", "blue");
-            telemetry.addData("Gyro:", heading);
             telemetry.update();
             robot.encoderDrive(this, 0.75, turnInch, -turnInch ,2);
+            //robot.gyroTurn(this, 360-15, 3);
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
+            sleep(100);
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-        }
-        else if ( blueValue < redValue ) {
+            robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
+            //robot.gyroTurn(this, 0, 3);
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        } else if ( blueValue < redValue ) {
             telemetry.addData("Color", "red");
             telemetry.update();
             robot.encoderDrive(this, 0.75, -turnInch, turnInch, 2);
-            telemetry.addData("Gyro:", heading);
-            telemetry.update();
+            //robot.gyroTurn(this, 15, 3);
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
-        }
-        else {
+            sleep(100);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+            robot.encoderDrive(this, 0.75, turnInch, -turnInch, 2);
+            //robot.gyroTurn(this, 0, 3);
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
+        } else {
             telemetry.addData("Color", "cant detect color");
             telemetry.update();
+            heading = robot.getHeading();
+            telemetry.addData("Gyro:", heading);
+            telemetry.update();
             robot.deploy(robot.colorArm);
             sleep(500);
             robot.deploy(robot.colorGate);
+
+            heading = robot.getHeading();
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
