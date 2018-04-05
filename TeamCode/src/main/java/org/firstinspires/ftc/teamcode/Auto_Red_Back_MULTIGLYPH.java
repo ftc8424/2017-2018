@@ -18,7 +18,7 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
  */
 @Autonomous(name = "Auto Red Back MULTIGLPYH", group = "RedSide")
 
-public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper robot = new HardwareHelper(FULLAUTO);
+public class   Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper robot = new HardwareHelper(FULLAUTO);
     private ElapsedTime runtime = new ElapsedTime();
     VuforiaLocalizer vuforia;
 
@@ -173,15 +173,12 @@ public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper ro
             telemetry.addData("Gyro:", heading);
             telemetry.update();
         }
-        int driveForwardFirst = 27;
+        double driveForwardFirst = 27;
 // Turn on stone
         int driveForwardSecond = 6;
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
-        //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-        robot.gyroTurn(this, 0, 3);
-        // firstTurn++;
-
+        //robot.encoderDrive(this, driveSpeed, -1, -1, 10);// firstTurn++;
         int driveSecond = 4;
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
@@ -191,35 +188,35 @@ public class Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper ro
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = 10;
+            driveForwardFirst = 19; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = 20;
+            driveForwardFirst = 6.5; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK
             //driveForwardSecond = 20;
         }
         else{
-            driveForwardFirst = 15;
+            driveForwardFirst = 13;
             //driveForwardSecond = 20;
         }
         if ( !opModeIsActive() ) return;
         telemetry.update();
-        robot.encoderDrive(this, driveSpeed, 20, 20, 10);
+        robot.encoderDrive(this, driveSpeed, 20, 20, 5);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() - 691);
         robot.gyroTurn(this, 315, 3);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 15,15, 10);
-        robot.encoderDrive(this, driveSpeed, -5,-5, 10);
+        robot.encoderDrive(this, driveSpeed, 15,15, 5);
+        robot.encoderDrive(this, driveSpeed, -5,-5, 5);
         robot.leftManip.setPower(-.5);
         robot.rightManip.setPower(-.5);
-        robot.gyroTurn(this, 90, 3);
-        robot.encoderDrive(this, driveSpeed, 15, 15, 10);
-        robot.gyroTurn(this,180,3);
+        robot.gyroTurn(this, 88, 3);
+        robot.encoderDrive(this, driveSpeed, 26, 26, 5);
+        robot.gyroTurn(this,182,3);
         //Dependant on the VuMark
-        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,10);
+        robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,5);
         robot.gyroTurn(this,90,3);
-        robot.encoderDrive(this, driveSpeed, 4, 4,10);
+        robot.encoderDrive(this, driveSpeed, 3, 3,5);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
 

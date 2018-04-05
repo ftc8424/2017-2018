@@ -214,7 +214,7 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         robot.encoderDrive(this, driveSpeed, -5,-5, 5);
         robot.leftManip.setPower(-.5);
         robot.rightManip.setPower(-.5);
-        robot.gyroTurn(this, 270, 3);
+        robot.gyroTurn(this, 272, 3);
         robot.encoderDrive(this, driveSpeed, 26, 26, 5);
         robot.gyroTurn(this,178,3);
         //Dependant on the VuMark
