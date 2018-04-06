@@ -192,11 +192,11 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = 6.5; //works
+            driveForwardFirst = 10; //works
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = 19; 
+            driveForwardFirst = 19; // works
             //driveForwardSecond = 20;
             }
         else{
@@ -220,7 +220,7 @@ public class Auto_Blue_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         //Dependant on the VuMark
         robot.encoderDrive(this, driveSpeed, driveForwardFirst, driveForwardFirst,5);
         robot.gyroTurn(this,270,3);
-        robot.encoderDrive(this, driveSpeed, 3, 3,5);
+        robot.encoderDrive(this, driveSpeed, 6, 6,5);
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
 

@@ -113,6 +113,24 @@ public class TeleOp extends OpMode {
         robot.leftManip.setPower(leftManipVal);
         robot.rightManip.setPower(rightManipVal);
 
+/* //One Man Drive Team LOLOLOL
+        float rightManipVal2 = -gamepad1.right_trigger;
+        float leftManipVal2 = -gamepad1.left_trigger;
+        robot.rightManip.setPower(rightManipVal2);
+        robot.leftManip.setPower(leftManipVal2);
+
+        if(gamepad1.right_stick_button){
+            robot.rightManip.setPower(1);
+        }
+        if(gamepad1.left_stick_button){
+            robot.leftManip.setPower(1);
+        }
+*/
+
+
+
+
+
         /*THIS IS WHAT NEEDS TO BE CODED AS PER COACH JERRY:
          *
          * When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
