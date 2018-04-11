@@ -156,7 +156,7 @@ public class Auto_Blue_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper 
         int firstTurn = 0;
         if ( !opModeIsActive() ) return;
          //robot.encoderDrive(this, driveSpeed, -1, -1, 10);
-        robot.gyroTurn(this, 90, 10); //Turns to 90
+        robot.gyroTurn(this, 92, 2); //Turns to 90
         firstTurn++;
 
         int driveSecond = 4;

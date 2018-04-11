@@ -57,7 +57,7 @@ public class HardwareHelper {
 
     /* Servo positions, adjust as necessary. */
     public static final double cArmStart = 0;
-    public static final double cArmDeploy = 0.65;
+    public static final double cArmDeploy = 0.6;
     public static final double cGateStart = 0;
     public static final double cGateDeploy = 0.65;
 

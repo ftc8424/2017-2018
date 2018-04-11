@@ -188,16 +188,16 @@ public class   Auto_Red_Back_MULTIGLYPH extends LinearOpMode{    HardwareHelper 
 
         if ( !opModeIsActive() ) return;
         if(vuMark == RelicRecoveryVuMark.RIGHT) {
-            driveForwardFirst = 19; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK
+            driveForwardFirst = 19; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK //works
             //driveForwardSecond = 20;
         }
         else if(vuMark == RelicRecoveryVuMark.LEFT) {
-            driveForwardFirst = 10; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK
+            driveForwardFirst = 10; //LEFT AND RIGHT IS SWITCHED COMPARED TO BLUE BACK //works
             //driveForwardSecond = 20;
         }
         else{
             driveForwardFirst = 13;
-            //driveForwardSecond = 20;
+            //driveForwardSecond = 20; //works
         }
         if ( !opModeIsActive() ) return;
         telemetry.update();
