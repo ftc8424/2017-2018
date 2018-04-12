@@ -93,7 +93,7 @@ public class HardwareHelper {
     private static final int    COUNTS_PER_LAUNCHER  = 3600; // AndyMark NeveRest 3.7:1, ideal
 
     private static final double encoderInch = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.14159265);
+            (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841971693993751); //YEEET first 50 digits
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
@@ -484,7 +484,53 @@ public class HardwareHelper {
 /*This code we wrote establishes different things 1.  It makes sure that during gyro that if certain
 statements are true than the code will stop working, 2. I don't know what else.
  */
+static final double     AutoFrontTurnSpeed              = 0.15;
+    public boolean AutoFrontsTurn(LinearOpMode caller,
+                            double heading,
+                            double timeoutS) throws InterruptedException {
+        int zValue;
+        double gHeading;
+        int heading360;
+        int absHeading;
+        double deltaHeading;
+        double rightPower;
+        double leftPower;
+        double turnspeed = AutoFrontTurnSpeed;
+        double stopTime = runtime.seconds() + timeoutS;
 
+        do {
+            gHeading = getHeading();
+            caller.telemetry.addData("AutoFrontsTurn:", "gHeading: %.1f, going to %.1f", gHeading, heading);
+            caller.telemetry.update();
+
+            deltaHeading = gHeading - heading;
+            if ( deltaHeading < -180 || (deltaHeading > 0 && deltaHeading < 180) ) {
+                leftPower = -turnspeed;
+                rightPower = turnspeed;
+            } else {
+                leftPower = turnspeed;
+                rightPower = -turnspeed;
+            }
+            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+                leftMidDrive.setPower(leftPower);
+                rightMidDrive.setPower(rightPower);
+            }
+            leftBackDrive.setPower(leftPower);
+            rightBackDrive.setPower(rightPower);
+            gHeading = getHeading();
+        }
+        while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.4 && runtime.seconds() < stopTime );
+        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+            leftMidDrive.setPower(0.0);
+            rightMidDrive.setPower(0.0);
+        }
+        leftBackDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
+        if ( Math.abs(gHeading - heading) <= 1 )
+            return true;
+        else
+            return false;
+    }
     /**
      * Drive by the encoders, running to a position relative to the current position based
      * on encoder ticks for a left and right motor.  It will move to a position for a specified

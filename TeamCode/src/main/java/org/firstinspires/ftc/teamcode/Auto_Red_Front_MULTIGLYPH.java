@@ -183,15 +183,15 @@ public class Auto_Red_Front_MULTIGLYPH extends LinearOpMode{    HardwareHelper r
         heading = robot.getHeading();
         telemetry.addData("Gyro:", heading);
 // Off Stone
-        robot.gyroTurn(this, 0, 5);
+        robot.AutoFrontsTurn(this, 0, 5);
         robot.leftManip.setPower(-1);
         robot.rightManip.setPower(-1);
-        robot.encoderDrive(this, driveSpeed, 22, 22, 3);
-        robot.encoderDrive(this, driveSpeed, -4, -4, 3);
+        robot.encoderDrive(this, driveSpeed, 22, 22, 5);
+        robot.encoderDrive(this, driveSpeed, -4, -4, 5);
         robot.lift.setTargetPosition(robot.lift.getCurrentPosition() + 691);
         robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.lift.setPower(0.6);
-        robot.gyroTurn(this, 180, 6);
+        robot.AutoFrontsTurn(this, 180, 6);
         robot.leftManip.setPower(-0.1);
         robot.rightManip.setPower(-0.1);
         robot.encoderDrive(this, driveSpeed, 25, 25, 5);
