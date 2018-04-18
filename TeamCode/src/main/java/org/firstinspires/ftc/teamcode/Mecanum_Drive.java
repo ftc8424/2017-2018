@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.MEC_TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 
 /**
@@ -63,7 +64,7 @@ public class Mecanum_Drive extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private HardwareHelper robot = new HardwareHelper(TROLLBOT);
+    private HardwareHelper robot = new HardwareHelper(MEC_TROLLBOT);
     private MecanumHelper drive = new MecanumHelper();
 
 
@@ -79,7 +80,6 @@ public class Mecanum_Drive extends OpMode {
     @Override
     public void init() {
         robot.robot_init(hardwareMap);
-        robot.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetry.addData("Status", "Initialized");
     }
 
@@ -127,8 +127,8 @@ public class Mecanum_Drive extends OpMode {
 
         double[] wheelPower = drive.motorPower(
                 Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x),
-                gamepad1.right_stick_x);
+                Math.atan2(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
+                -gamepad1.right_stick_x);
 
         robot.leftMidDrive.setPower(wheelPower[0]);
         robot.rightMidDrive.setPower(wheelPower[1]);

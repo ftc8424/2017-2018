@@ -20,11 +20,13 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.AUTOTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.COLORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLAUTO;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
+import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.MEC_TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.REV_TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.SENSORTEST;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOTMANIP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT_SERVOTEST;
+
 
 /**
  * Created by FTC8424 on 10/13/2016.
@@ -77,7 +79,7 @@ public class HardwareHelper {
     /* Use this when creating the constructor, to state the type of robot we're using. */
     public enum RobotType {
         FULLTELEOP, FULLAUTO, LAUNCHTEST, COLORTEST, AUTOTEST, TROLLBOT,TROLLBOTMANIP,
-        TROLLBOT_SERVOTEST, SENSORTEST, REV_TROLLBOT
+        TROLLBOT_SERVOTEST, SENSORTEST, REV_TROLLBOT, MEC_TROLLBOT
     }
 
     /*
@@ -185,34 +187,42 @@ public class HardwareHelper {
     private void initMotor() {
          /* Set the drive motors in the map */
         if ( robotType == TROLLBOT || robotType == FULLTELEOP || robotType == FULLAUTO ||
-                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST || robotType == SENSORTEST) {
+                robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST || robotType == SENSORTEST || robotType == MEC_TROLLBOT) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
 
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
-            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if( robotType != MEC_TROLLBOT) {
+                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
             if (robotType == FULLTELEOP) {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            if ( robotType == FULLAUTO || robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
-                lift = hwMap.dcMotor.get(cfgLift);
-                //lift.setDirection(DcMotor.Direction.REVERSE);
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                waitForReset(lift, 2000);
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-               if (robotType == FULLTELEOP || robotType == FULLAUTO ) {
-                   leftManip = hwMap.dcMotor.get(cfgleftManip);
-                   rightManip = hwMap.dcMotor.get(cfgrightManip);
-                   leftManip.setDirection(DcMotor.Direction.REVERSE);
-               } else if (robotType != FULLAUTO){
+            if ( robotType == FULLAUTO || robotType == FULLTELEOP  || robotType == TROLLBOTMANIP || robotType == MEC_TROLLBOT) {
+                if ( robotType != MEC_TROLLBOT ) {
+                    lift = hwMap.dcMotor.get(cfgLift);
+                    //lift.setDirection(DcMotor.Direction.REVERSE);
+                    lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    waitForReset(lift, 2000);
+                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if (robotType == FULLTELEOP || robotType == FULLAUTO) {
+                        leftManip = hwMap.dcMotor.get(cfgleftManip);
+                        rightManip = hwMap.dcMotor.get(cfgrightManip);
+                        leftManip.setDirection(DcMotor.Direction.REVERSE);
+                    }
+                }
+                if (robotType != FULLAUTO){
                    leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                    rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
-                   rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
-                   leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
+                   if(robotType != MEC_TROLLBOT) {
+                       rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
+                       leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
+                   }
                    rightMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                    leftMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                }
@@ -248,7 +258,7 @@ public class HardwareHelper {
         if ( robotType != TROLLBOT_SERVOTEST ) {
             leftBackDrive.setPower(0);
             rightBackDrive.setPower(0);
-            if ( robotType == TROLLBOT ) {
+            if ( robotType == TROLLBOT || robotType == MEC_TROLLBOT) {
                 leftMidDrive.setPower(0);
                 rightMidDrive.setPower(0);
 
