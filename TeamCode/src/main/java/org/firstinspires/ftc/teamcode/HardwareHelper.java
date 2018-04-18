@@ -706,7 +706,14 @@ static final double     AutoFrontTurnSpeed              = 0.15;
         }
         caller.telemetry.addData("normalDrive:", "Power set to L:%.2f, R:%.2f", leftBackDrive.getPower(), rightBackDrive.getPower());
     }
-
+    public void meccanumDrive (OpMode caller, double leftPower, double rightPower) {
+        leftBackDrive.setPower(leftPower);
+        rightBackDrive.setPower(-rightPower);
+        if ( robotType == TROLLBOT ) {
+            leftMidDrive.setPower(-leftPower);
+            rightMidDrive.setPower(rightPower);
+        }
+    }
     /**
      * Drive the robot side to side based on power settings passed in.
      *
