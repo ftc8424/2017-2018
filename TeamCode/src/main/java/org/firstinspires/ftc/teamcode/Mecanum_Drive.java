@@ -104,12 +104,37 @@ public class Mecanum_Drive extends OpMode {
 
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        double[] wheelPower = drive.motorPower(Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x), gamepad1.right_stick_x);
+      /*
+       * The three elements needed by drive.motorPower() method are the Magnitude (or force
+       * to apply), the angle to drive and then the rotation for the front of the robot.
+       * You get these on the driver game pads by using a combination of geometry and trig
+       * functions.  The right angle formed by the game pad's left stick can e used for
+       * both the magnitude and angle.  The magnitude can be applied by finding the
+       * hypotenuse of the right triangle with the x and y values.  That's just done by
+       * applying the Pythagorean Theorm so it's H-squared = X-squared + Y+squared.
+       *
+       * The ANGLE requires trigonometry to figure out.  The TANGENT of an angle of right triangle
+       * is the value of the Opposite side over the Adjacent one.  In this case, we don't know
+       * the angle but we know the Opposite and Adjacent side lengths and NEED to find the angle.
+       * For that, we need the INVERSE of the Tangent function, or the ARCTANGENT.  To get the angle
+       * we need to determine the ARC Tangent of the side OPPOSITE the angle (the Y value of the
+       * game pad) over the ADJACENT side (the X value of the game pad).  That will give us the
+       * ANGLE for that part in 0 - 2*PI values.
+       *
+       * Nicely, the Math class gives us easy methods to use to compute those:  Math.hypot() and
+       * Math.atan2().
+       */
+
+        double[] wheelPower = drive.motorPower(
+                Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
+                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x),
+                gamepad1.right_stick_x);
+
         robot.leftMidDrive.setPower(wheelPower[0]);
         robot.rightMidDrive.setPower(wheelPower[1]);
         robot.leftBackDrive.setPower(wheelPower[2]);
         robot.rightBackDrive.setPower(wheelPower[3]);
+
         telemetry.addData("Left Front Power", wheelPower[0])
                  .addData("Right Front Power", wheelPower[1])
                  .addData("Left Back Power", wheelPower[2])

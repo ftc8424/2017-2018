@@ -13,11 +13,11 @@ public class MecanumHelper {
      * settings for each of the motors.
      *
      * @param magnitude
-     *  This is the left stick y value
+     *  This is the hypotenuse from right triangle of left stick values
      * @param angle
-     *  This is the right stick y value
+     *  This is the ARC Tangent from right triangle of left stick values
      * @param rotation
-     *  This is the right trigger value
+     *  This is the right stick x for how quickly to rotate to the angle
      * @return
      *   An array of doubles for power values to left front, right front, left back and right back
      */
