@@ -126,9 +126,9 @@ public class Mecanum_Drive extends OpMode {
        */
 
         double[] wheelPower = drive.motorPower(
-                Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4,
-                gamepad1.right_stick_x);
+                Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x),
+                Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) + Math.PI / 4,
+                -gamepad1.right_stick_x);
 
         robot.leftMidDrive.setPower(wheelPower[0]);
         robot.rightMidDrive.setPower(wheelPower[1]);

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -199,6 +200,11 @@ public class HardwareHelper {
                 leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             }
 
+            else {
+                rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            }
+
             if (robotType == FULLTELEOP) {
                 leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -223,6 +229,12 @@ public class HardwareHelper {
                        rightMidDrive.setDirection(DcMotor.Direction.FORWARD);
                        leftMidDrive.setDirection(DcMotor.Direction.REVERSE);
                    }
+
+                   else {
+                       rightMidDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+                       leftMidDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+                   }
+
                    rightMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                    leftMidDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                }

@@ -36,8 +36,8 @@ public class MecanumHelper {
 
         power[3] = magnitude * Math.cos(angle) - rotation;
 
-        //return scalePower(power[0], power[1], power[2], power[3]);
-        return power;
+        return scalePower(power[0], power[1], power[2], power[3]);
+        //return power;
     }
 
     /**

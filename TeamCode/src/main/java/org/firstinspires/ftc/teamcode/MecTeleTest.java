@@ -71,6 +71,8 @@ public class MecTeleTest extends OpMode {
     double liftSpeed = 0.6;
     int liftStoneHeight = 691;
     boolean liftLocked = false;
+    double atime, btime, xtime, ytime;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -78,6 +80,7 @@ public class MecTeleTest extends OpMode {
     @Override
     public void init() {
         robot.robot_init(hardwareMap);
+        atime = btime = xtime = ytime = 0;
         telemetry.addData("Status", "Initialized");
     }
 
@@ -119,6 +122,42 @@ public class MecTeleTest extends OpMode {
                 .addData("Left Back Power", wheelPower[2])
                 .addData("Right Back Power", wheelPower[3]);
 
+        if (gamepad1.a && runtime.seconds() > atime + 2) {
+            if (robot.leftMidDrive.getPower() != 0) {
+                robot.leftMidDrive.setPower(0);
+            }
+            else {
+                robot.leftMidDrive.setPower(0.5);
+            }
+            atime = runtime.seconds();
+        }
+        if (gamepad1.b && runtime.seconds() > btime + 2) {
+            if (robot.rightBackDrive.getPower() != 0) {
+                robot.rightBackDrive.setPower(0);
+            }
+            else {
+                robot.rightBackDrive.setPower(0.5);
+            }
+            btime = runtime.seconds();
+
+        }if (gamepad1.x && runtime.seconds() > xtime + 2) {
+            if (robot.leftBackDrive.getPower() != 0) {
+                robot.leftBackDrive.setPower(0);
+            }
+            else {
+                robot.leftBackDrive.setPower(0.5);
+            }
+            xtime = runtime.seconds();
+
+        }if (gamepad1.y && runtime.seconds() > ytime + 2) {
+            if (robot.rightMidDrive.getPower() != 0) {
+                robot.rightMidDrive.setPower(0);
+            }
+            else {
+                robot.rightMidDrive.setPower(0.5);
+            }
+            ytime = runtime.seconds();
+        }
 
 /* //One Man Drive Team LOLOLOL
         float rightManipVal2 = -gamepad1.right_trigger;
