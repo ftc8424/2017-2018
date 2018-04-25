@@ -222,7 +222,7 @@ public class HardwareHelper {
                         leftManip.setDirection(DcMotor.Direction.REVERSE);
                     }
                 }
-                if (robotType != FULLAUTO){
+                if (robotType != FULLAUTO && robotType != FULLTELEOP){
                    leftMidDrive = hwMap.dcMotor.get(cfgLMidDrive);
                    rightMidDrive = hwMap.dcMotor.get(cfgRMidDrive);
                    if(robotType != MEC_TROLLBOT) {
@@ -445,7 +445,7 @@ public class HardwareHelper {
                 leftPower = turnspeed;
                 rightPower = -turnspeed;
             }
-            if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+            if (robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
                 leftMidDrive.setPower(leftPower);
                 rightMidDrive.setPower(rightPower);
             }
@@ -455,7 +455,7 @@ public class HardwareHelper {
         }
 //        while (caller.opModeIsActive() && Math.abs(deltaHeading) > 1 && runtime.seconds() < stopTime );
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.4 && runtime.seconds() < stopTime );
-        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+        if (robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
             leftMidDrive.setPower(0.0);
             rightMidDrive.setPower(0.0);
         }
@@ -542,7 +542,7 @@ static final double     AutoFrontTurnSpeed              = 0.15;
             gHeading = getHeading();
         }
         while (caller.opModeIsActive() && Math.abs(gHeading - heading) > 0.4 && runtime.seconds() < stopTime );
-        if (robotType == FULLTELEOP || robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
+        if ( robotType == TROLLBOT || robotType == TROLLBOTMANIP) {
             leftMidDrive.setPower(0.0);
             rightMidDrive.setPower(0.0);
         }
@@ -739,7 +739,7 @@ static final double     AutoFrontTurnSpeed              = 0.15;
     public void sideDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(-leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == FULLTELEOP || robotType == TROLLBOT ) {
+        if (  robotType == TROLLBOT ) {
                 leftMidDrive.setPower(leftPower);
                 rightMidDrive.setPower(-rightPower);
         }
