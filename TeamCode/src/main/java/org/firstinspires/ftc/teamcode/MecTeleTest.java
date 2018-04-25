@@ -39,7 +39,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.FULLTELEOP;
 import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.MEC_TROLLBOT;
-import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
 
 /**
  * Created by FTC8424 on 9/15/2016.
@@ -58,15 +57,14 @@ import static org.firstinspires.ftc.teamcode.HardwareHelper.RobotType.TROLLBOT;
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Mecanum Trollbot", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="MecTeleTest", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
 
-public class Mecanum_Drive extends OpMode {
+public class MecTeleTest extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private HardwareHelper robot = new HardwareHelper(MEC_TROLLBOT);
     private MecanumHelper drive = new MecanumHelper();
-
 
     long LiftMaxHeight = -1; // 2200 ; //3360 = 19 inches with a 2 inch spool, and a NeveRest 40:1 motor -> (which has 1120 encoder ticks per revolution)
     long LiftCurrentPosition = 0;
@@ -104,43 +102,65 @@ public class Mecanum_Drive extends OpMode {
 
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-      /*
-       * The three elements needed by drive.motorPower() method are the Magnitude (or force
-       * to apply), the angle to drive and then the rotation for the front of the robot.
-       * You get these on the driver game pads by using a combination of geometry and trig
-       * functions.  The right angle formed by the game pad's left stick can e used for
-       * both the magnitude and angle.  The magnitude can be applied by finding the
-       * hypotenuse of the right triangle with the x and y values.  That's just done by
-       * applying the Pythagorean Theorm so it's H-squared = X-squared + Y+squared.
-       *
-       * The ANGLE requires trigonometry to figure out.  The TANGENT of an angle of right triangle
-       * is the value of the Opposite side over the Adjacent one.  In this case, we don't know
-       * the angle but we know the Opposite and Adjacent side lengths and NEED to find the angle.
-       * For that, we need the INVERSE of the Tangent function, or the ARCTANGENT.  To get the angle
-       * we need to determine the ARC Tangent of the side OPPOSITE the angle (the Y value of the
-       * game pad) over the ADJACENT side (the X value of the game pad).  That will give us the
-       * ANGLE for that part in 0 - 2*PI values.
-       *
-       * Nicely, the Math class gives us easy methods to use to compute those:  Math.hypot() and
-       * Math.atan2().
-       */
+        double rightStickVal = gamepad1.right_stick_y;
+        double leftStickVal = gamepad1.left_stick_y;
+
+
+        //robot.normalDrive(this, leftStickVal, rightStickVal);
 
         double[] wheelPower = drive.motorPower(
                 Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y),
-                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4,
+                Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x),
                 gamepad1.right_stick_x);
 
-        robot.leftMidDrive.setPower(wheelPower[0]);
-        robot.rightMidDrive.setPower(wheelPower[1]);
-        robot.leftBackDrive.setPower(wheelPower[2]);
-        robot.rightBackDrive.setPower(wheelPower[3]);
+        telemetry.addData("atan",  Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) + Math.PI / 4)
+                .addData("Left Front Power", wheelPower[0])
+                .addData("Right Front Power", wheelPower[1])
+                .addData("Left Back Power", wheelPower[2])
+                .addData("Right Back Power", wheelPower[3]);
 
-        telemetry.addData("Left Front Power", wheelPower[0])
-                 .addData("Right Front Power", wheelPower[1])
-                 .addData("Left Back Power", wheelPower[2])
-                 .addData("Right Back Power", wheelPower[3]);
+
+/* //One Man Drive Team LOLOLOL
+        float rightManipVal2 = -gamepad1.right_trigger;
+        float leftManipVal2 = -gamepad1.left_trigger;
+        robot.rightManip.setPower(rightManipVal2);
+        robot.leftManip.setPower(leftManipVal2);
+
+        if(gamepad1.right_stick_button){
+            robot.rightManip.setPower(1);
+        }
+        if(gamepad1.left_stick_button){
+            robot.leftManip.setPower(1);
+        }
+*/
+
+
+
+
+
+        /*THIS IS WHAT NEEDS TO BE CODED AS PER COACH JERRY:
+         *
+         * When the gamepad2.dpad_up is called, the manipulator should be able to move up as long
+         * as the gamepad2.dpad is held down. When it is not held down, it stops moving. The code
+         * needs to have a restriction, so that the rope doesn't cause the motor to burn out. Also,
+         * when the gamepad2.dpad_up is called, the code should be able to recall how many rotations
+         * were made when going up, and should retrace those rotations downward to get the
+         * manipulator to its starting position, that way no motors get burnt out, and there can
+         * be a single starting point for the simplicity of the code, and the driver controlling
+         * that part of the robot.
+         */
+
+
 
     } // loop
+
+    //if (gamepad2.y) {
+    //robot.waitForReset()
+
+
+
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP

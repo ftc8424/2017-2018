@@ -190,13 +190,13 @@ public class HardwareHelper {
                 robotType == AUTOTEST || robotType == TROLLBOTMANIP || robotType == COLORTEST || robotType == SENSORTEST || robotType == MEC_TROLLBOT) {
             leftBackDrive = hwMap.dcMotor.get(cfgLBckDrive);
             rightBackDrive = hwMap.dcMotor.get(cfgRtBckDrive);
+            rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             //rpCenter = hwMap.dcMotor.get(cfgrpCenter);
             if( robotType != MEC_TROLLBOT) {
                 rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
                 leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-                rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
             if (robotType == FULLTELEOP) {
@@ -710,7 +710,7 @@ static final double     AutoFrontTurnSpeed              = 0.15;
     public void normalDrive (OpMode caller, double leftPower, double rightPower) {
         leftBackDrive.setPower(leftPower);
         rightBackDrive.setPower(rightPower);
-        if ( robotType == TROLLBOT ) {
+        if ( robotType == TROLLBOT || robotType == MEC_TROLLBOT ) {
             leftMidDrive.setPower(leftPower);
             rightMidDrive.setPower(rightPower);
         }
