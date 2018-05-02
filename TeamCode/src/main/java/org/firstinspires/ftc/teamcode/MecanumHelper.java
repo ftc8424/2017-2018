@@ -24,17 +24,17 @@ public class MecanumHelper {
     public double[] motorPower (double magnitude, double angle, double rotation) {
         double[] power = {0.0, 0.0, 0.0, 0.0};
 
-        magnitude = Range.clip (magnitude, -1, 1);
+       /* magnitude = Range.clip (magnitude, -1, 1);
         angle = Range.clip (angle,0, 2 * Math.PI );
         rotation = Range.clip (rotation, -1,1);
+*/
+        power[0] = magnitude * Math.sin(angle) + rotation;
 
-        power[0] = magnitude * Math.cos(angle) + rotation;
+        power[1] = magnitude * Math.cos(angle) - rotation;
 
-        power[1] = magnitude * Math.sin(angle) - rotation;
+        power[2] = magnitude * Math.cos(angle) + rotation;
 
-        power[2] = magnitude * Math.sin(angle) + rotation;
-
-        power[3] = magnitude * Math.cos(angle) - rotation;
+        power[3] = magnitude * Math.sin(angle) - rotation;
 
         return scalePower(power[0], power[1], power[2], power[3]);
         //return power;

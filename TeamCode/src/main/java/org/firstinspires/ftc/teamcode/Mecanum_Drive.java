@@ -127,7 +127,7 @@ public class Mecanum_Drive extends OpMode {
 
         double[] wheelPower = drive.motorPower(
                 Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x),
-                Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y) + Math.PI / 4,
+                Math.atan2(-gamepad1.left_stick_x, gamepad1.left_stick_y) + Math.PI / 4,
                 -gamepad1.right_stick_x);
 
         robot.leftMidDrive.setPower(wheelPower[0]);
@@ -146,7 +146,6 @@ public class Mecanum_Drive extends OpMode {
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public    void stop() {
-        robot.normalDrive(this, 0, 0);
+    public    void stop() {robot.normalDrive(this, 0, 0);
     }
 }
